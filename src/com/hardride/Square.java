@@ -145,7 +145,7 @@ public class Square {
         GLES20.glUseProgram(mProgram);
 
         // get handle to vertex shader's vPosition member
-        mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
+        mPositionHandle = GLES20.glGetAttribLocation(mProgram, "a_Position");
 
         // Enable a handle to the triangle vertices
         GLES20.glEnableVertexAttribArray(mPositionHandle);
@@ -156,7 +156,7 @@ public class Square {
                 GLES20.GL_FLOAT, false,
                 0, vertexBuffer);
 
-        mNormalsHandle = GLES20.glGetAttribLocation(mProgram, "vNormal");
+        mNormalsHandle = GLES20.glGetAttribLocation(mProgram, "a_Normal");
         GLES20.glEnableVertexAttribArray(mNormalsHandle);
         
         GLES20.glVertexAttribPointer(
@@ -165,13 +165,13 @@ public class Square {
                 0, normalBuffer);
         
         // get handle to fragment shader's vColor member
-        mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
+        mColorHandle = GLES20.glGetUniformLocation(mProgram, "u_Color");
 
         // Set color for drawing the triangle
         GLES20.glUniform4fv(mColorHandle, 1, color, 0);
 
         // get handle to shape's transformation matrix
-        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "u_MVPMatrix");
         HardRideRenderer.checkGlError("glGetUniformLocation");
 
         // Apply the projection and view transformation
