@@ -52,7 +52,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
 
         // Set the background frame color
-        GLES20.glClearColor(0.4f, 0.4f, 0.0f, 1.0f);
+        GLES20.glClearColor(0.0f, 0.0f, 0.3f, 1.0f);
 
         mSquare   = new Square(mVShaderCode, mFShaderCode);
     }
@@ -67,13 +67,17 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glDepthFunc(GLES20.GL_LEQUAL);
         GLES20.glDepthMask(true);
         
+        GLES20.glEnable(GLES20.GL_CULL_FACE);
+        GLES20.glCullFace(GLES20.GL_BACK);
+   
+        
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, 0.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, -15.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
 
 
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
-        Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 0, 1.0f);
+        Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 1.0f, 0);
 
         Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
 
@@ -91,7 +95,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 0.1f, 100.0f);
+        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1.0f, 100.0f);
 
     }
 

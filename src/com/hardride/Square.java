@@ -37,16 +37,26 @@ public class Square {
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
     static float squareCoords[] = {
-            -5.0f,  5.0f, 1.0f,   // top left
-            -5.0f, -5.0f, 1.0f,   // bottom left
-             5.0f, -5.0f, 1.0f,   // bottom right
-             5.0f,  5.0f, 1.0f }; // top right
+            -5.0f,  5.0f, -5.0f,   	// top 		left 	near
+            -5.0f, -5.0f, -5.0f,   	// bottom 	left	near
+             5.0f, -5.0f, -5.0f,   	// bottom 	right	near
+             5.0f,  5.0f, -5.0f, 	// top 		right	near
+    		-5.0f,  5.0f,  5.0f,   	// top 		left 	far
+			-5.0f, -5.0f,  5.0f,   	// bottom 	left	far
+			 5.0f, -5.0f,  5.0f,   	// bottom 	right	far
+		 	 5.0f,  5.0f,  5.0f 	// top 		right	far
+			 }; 	
 
-    private final short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
+    private final short drawOrder[] = { 
+    		0, 2, 1, 0, 3, 2,
+    		4, 5, 6, 4, 6, 7,
+    		3, 6, 2, 3, 7, 6,
+    		4, 1, 5, 4, 0, 1, 
+    		};
 
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
 
-    float color[] = { 0.2f, 0.709803922f, 0.898039216f, 1.0f };
+    float color[] = { 0.4f, 0.0f, 0.1f, 1.0f };
 
     /**
      * Sets up the drawing object data for use in an OpenGL ES context.
