@@ -27,7 +27,7 @@ import android.util.Log;
 public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "HardRideRenderer";
-    private Triangle mTriangle;
+    
     private Square   mSquare;
 
     private String 	mVShaderCode;
@@ -54,7 +54,6 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         // Set the background frame color
         GLES20.glClearColor(0.4f, 0.4f, 0.0f, 1.0f);
 
-        mTriangle = new Triangle();
         mSquare   = new Square(mVShaderCode, mFShaderCode);
     }
 
@@ -71,28 +70,15 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         // Set the camera position (View matrix)
         Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, 0.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
 
-        // Calculate the projection and view transformation
+
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
-
-        // Draw square
-        mSquare.draw(mMVPMatrix);
-
-        // Create a rotation for the triangle
-
-        // Use the following code to generate constant rotation.
-        // Leave this code out when using TouchEvents.
-        // long time = SystemClock.uptimeMillis() % 4000L;
-        // float angle = 0.090f * ((int) time);
 
         Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 0, 1.0f);
 
-        // Combine the rotation matrix with the projection and camera view
-        // Note that the mMVPMatrix factor *must be first* in order
-        // for the matrix multiplication product to be correct.
         Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
 
-        // Draw triangle
-        mTriangle.draw(scratch);
+        // Draw square
+        mSquare.draw(scratch);
     }
 
     @Override

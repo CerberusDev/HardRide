@@ -37,10 +37,10 @@ public class Square {
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
     static float squareCoords[] = {
-            -10.0f,  5.0f, 1.0f,   // top left
-            -10.0f, -5.0f, 1.0f,   // bottom left
-            0.0f, -5.0f, 1.0f,   // bottom right
-            0.0f,  5.0f, 1.0f }; // top right
+            -5.0f,  5.0f, 1.0f,   // top left
+            -5.0f, -5.0f, 1.0f,   // bottom left
+             5.0f, -5.0f, 1.0f,   // bottom right
+             5.0f,  5.0f, 1.0f }; // top right
 
     private final short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
 
