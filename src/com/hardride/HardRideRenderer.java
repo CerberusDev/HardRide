@@ -105,6 +105,20 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glShaderSource(shader, shaderCode);
         GLES20.glCompileShader(shader);
 
+        final int[] compileStatus = new int[1];
+        GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compileStatus, 0);
+        
+        if (compileStatus[0] == 0) {
+        	// glGetShaderInfoLog() doesn't work :( For possible solution look here: 
+        	// http://stackoverflow.com/questions/4588800/glgetshaderinfolog-returns-empty-string-android
+        	// and here:
+        	// http://stackoverflow.com/questions/24122075/the-import-com-badlogic-cannot-be-resolved-in-java-project-libgdx-setup
+        	Log.e("ShaderCompiler", "Error compiling shader: " + GLES20.glGetShaderInfoLog(shader));
+        	GLES20.glDeleteShader(shader);
+        	shader = 0;
+        	throw new RuntimeException("Error during compiling shader");
+        }
+        
         return shader;
     }
 

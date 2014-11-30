@@ -36,6 +36,7 @@ public class Square {
     private int mNormalsHandle;
     private int mColorHandle;
     private int mMVPMatrixHandle;
+    private int mMVMatrixHandle;
     
     private float mYaw;
     private float mPitch;
@@ -80,7 +81,7 @@ public class Square {
     		1, 6, 5, 1, 2, 6,
     		};
 
-    float color[] = { 0.4f, 0.0f, 0.1f, 1.0f };
+    float color[] = { 1.0f, 0.0f, 0.0f, 1.0f };
     
     /**
      * Sets up the drawing object data for use in an OpenGL ES context.
@@ -170,14 +171,19 @@ public class Square {
         // Set color for drawing the triangle
         GLES20.glUniform4fv(mColorHandle, 1, color, 0);
 
-        // get handle to shape's transformation matrix
+
+        mMVMatrixHandle = GLES20.glGetUniformLocation(mProgram, "u_MVMatrix");
+        HardRideRenderer.checkGlError("glGetUniformLocation");
+
+        GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mMVMatrix, 0);
+        HardRideRenderer.checkGlError("glUniformMatrix4fv");
+
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "u_MVPMatrix");
         HardRideRenderer.checkGlError("glGetUniformLocation");
 
-        // Apply the projection and view transformation
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
         HardRideRenderer.checkGlError("glUniformMatrix4fv");
-
+        
         // Draw the square
         GLES20.glDrawElements(
                 GLES20.GL_TRIANGLES, drawOrder.length,
