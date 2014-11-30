@@ -34,13 +34,9 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private String 	mFShaderCode;
     
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
-    private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
-    private final float[] mRotationMatrix = new float[16];
-
-    private float mAngle;
-    
+       
     public HardRideRenderer(String vShaderCode, String fShaderCode) {
     	super();
     	
@@ -59,7 +55,6 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 unused) {
-        float[] scratch = new float[16];
 
         // Draw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
@@ -70,19 +65,10 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glEnable(GLES20.GL_CULL_FACE);
         GLES20.glCullFace(GLES20.GL_BACK);
    
-        
-        // Set the camera position (View matrix)
         Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, -15.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
-
-
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
-
-        Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 1.0f, 0);
-
-        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
-
+        
         // Draw square
-        mSquare.draw(scratch);
+        mSquare.draw(mViewMatrix, mProjectionMatrix);
     }
 
     @Override
@@ -148,14 +134,14 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
      * @return - A float representing the rotation angle.
      */
     public float getAngle() {
-        return mAngle;
+        return mSquare.getAngle();
     }
 
     /**
      * Sets the rotation angle of the triangle shape (mTriangle).
      */
     public void setAngle(float angle) {
-        mAngle = angle;
+        mSquare.setAngle(angle);
     }
 
 }

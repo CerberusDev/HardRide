@@ -21,6 +21,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import android.opengl.GLES20;
+import android.opengl.Matrix;
 
 /**
  * A two-dimensional square for use as a drawn object in OpenGL ES 2.0.
@@ -28,11 +29,15 @@ import android.opengl.GLES20;
 public class Square {
 
     private final FloatBuffer vertexBuffer;
+    private final FloatBuffer normalBuffer;
     private final ShortBuffer drawListBuffer;
     private final int mProgram;
     private int mPositionHandle;
+    private int mNormalsHandle;
     private int mColorHandle;
     private int mMVPMatrixHandle;
+    
+    private float mAngle;
 
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
@@ -45,7 +50,19 @@ public class Square {
 			-5.0f, -5.0f,  5.0f,   	// bottom 	left	far
 			 5.0f, -5.0f,  5.0f,   	// bottom 	right	far
 		 	 5.0f,  5.0f,  5.0f 	// top 		right	far
-			 }; 	
+			 }; 
+    
+    static final int NORMALS_PER_VERTEX = 3;
+    static float squareNormals[] = {
+        -1.0f,  1.0f, -1.0f,   	// top 		left 	near
+        -1.0f, -1.0f, -1.0f,   	// bottom 	left	near
+         1.0f, -1.0f, -1.0f,   	// bottom 	right	near
+         1.0f,  1.0f, -1.0f, 	// top 		right	near
+		-1.0f,  1.0f,  1.0f,   	// top 		left 	far
+		-1.0f, -1.0f,  1.0f,   	// bottom 	left	far
+		 1.0f, -1.0f,  1.0f,   	// bottom 	right	far
+	 	 1.0f,  1.0f,  1.0f 	// top 		right	far
+		 }; 	
 
     private final short drawOrder[] = { 
     		0, 2, 1, 0, 3, 2,
@@ -54,10 +71,11 @@ public class Square {
     		4, 1, 5, 4, 0, 1, 
     		};
 
-    private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
-
     float color[] = { 0.4f, 0.0f, 0.1f, 1.0f };
 
+    private final float[] mMVPMatrix = new float[16];
+    private final float[] mRotationMatrix = new float[16];
+    
     /**
      * Sets up the drawing object data for use in an OpenGL ES context.
      */
@@ -71,6 +89,14 @@ public class Square {
         vertexBuffer.put(squareCoords);
         vertexBuffer.position(0);
 
+        ByteBuffer nbb = ByteBuffer.allocateDirect(
+        // (# of coordinate values * 4 bytes per float)
+                squareNormals.length * 4);
+        nbb.order(ByteOrder.nativeOrder());
+        normalBuffer = nbb.asFloatBuffer();
+        normalBuffer.put(squareNormals);
+        normalBuffer.position(0);
+        
         // initialize byte buffer for the draw list
         ByteBuffer dlb = ByteBuffer.allocateDirect(
                 // (# of coordinate values * 2 bytes per short)
@@ -101,7 +127,19 @@ public class Square {
      * @param mvpMatrix - The Model View Project matrix in which to draw
      * this shape.
      */
-    public void draw(float[] mvpMatrix) {
+    public void draw(float[] ViewMatrix, float[] mProjectionMatrix) {
+    	
+        float[] scratch = new float[16];
+        
+        
+
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, ViewMatrix, 0);
+
+        Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 1.0f, 0);
+
+        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
+    	
+    	
         // Add program to OpenGL environment
         GLES20.glUseProgram(mProgram);
 
@@ -115,8 +153,16 @@ public class Square {
         GLES20.glVertexAttribPointer(
                 mPositionHandle, COORDS_PER_VERTEX,
                 GLES20.GL_FLOAT, false,
-                vertexStride, vertexBuffer);
+                0, vertexBuffer);
 
+        mNormalsHandle = GLES20.glGetAttribLocation(mProgram, "vNormal");
+        GLES20.glEnableVertexAttribArray(mNormalsHandle);
+        
+        GLES20.glVertexAttribPointer(
+        		mNormalsHandle, NORMALS_PER_VERTEX,
+                GLES20.GL_FLOAT, false,
+                0, normalBuffer);
+        
         // get handle to fragment shader's vColor member
         mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
 
@@ -128,7 +174,7 @@ public class Square {
         HardRideRenderer.checkGlError("glGetUniformLocation");
 
         // Apply the projection and view transformation
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, scratch, 0);
         HardRideRenderer.checkGlError("glUniformMatrix4fv");
 
         // Draw the square
@@ -138,6 +184,14 @@ public class Square {
 
         // Disable vertex array
         GLES20.glDisableVertexAttribArray(mPositionHandle);
+        GLES20.glDisableVertexAttribArray(mNormalsHandle);
     }
 
+    public float getAngle() {
+        return mAngle;
+    }
+
+    public void setAngle(float angle) {
+        mAngle = angle;
+    }
 }
