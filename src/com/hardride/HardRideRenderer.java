@@ -30,6 +30,9 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private Triangle mTriangle;
     private Square   mSquare;
 
+    private String 	mVShaderCode;
+    private String 	mFShaderCode;
+    
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
@@ -37,7 +40,14 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private final float[] mRotationMatrix = new float[16];
 
     private float mAngle;
-
+    
+    public HardRideRenderer(String vShaderCode, String fShaderCode) {
+    	super();
+    	
+    	mVShaderCode = vShaderCode;
+    	mFShaderCode = fShaderCode;
+    }
+    
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
 
@@ -45,7 +55,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glClearColor(0.4f, 0.4f, 0.0f, 1.0f);
 
         mTriangle = new Triangle();
-        mSquare   = new Square();
+        mSquare   = new Square(mVShaderCode, mFShaderCode);
     }
 
     @Override
