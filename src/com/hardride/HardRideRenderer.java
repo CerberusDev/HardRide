@@ -134,14 +134,14 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
      * @return - A float representing the rotation angle.
      */
     public float getAngle() {
-        return mSquare.getYaw();
+        return mSquare.getPitch();
     }
 
     /**
      * Sets the rotation angle of the triangle shape (mTriangle).
      */
     public void setAngle(float angle) {
-        mSquare.setYaw(angle);
+        mSquare.setPitch(angle);
     }
 
 }

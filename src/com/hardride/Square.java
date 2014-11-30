@@ -41,6 +41,11 @@ public class Square {
     private float mPitch;
     private float mRoll;
     
+    private final float[] mRotationMatrix = new float[16];
+    
+    private static final float[] mMVMatrix = new float[16];
+    private static final float[] mMVPMatrix = new float[16];
+    
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
     static float squareCoords[] = {
@@ -76,9 +81,6 @@ public class Square {
     		};
 
     float color[] = { 0.4f, 0.0f, 0.1f, 1.0f };
-
-    private final float[] mMVPMatrix = new float[16];
-    private final float[] mRotationMatrix = new float[16];
     
     /**
      * Sets up the drawing object data for use in an OpenGL ES context.
@@ -136,17 +138,9 @@ public class Square {
      */
     public void draw(float[] ViewMatrix, float[] mProjectionMatrix) {
     	
-        float[] scratch = new float[16];
+        Matrix.multiplyMM(mMVMatrix, 0, ViewMatrix, 0, mRotationMatrix, 0);
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0);
         
-        
-
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, ViewMatrix, 0);
-
-        
-
-        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
-    	
-    	
         // Add program to OpenGL environment
         GLES20.glUseProgram(mProgram);
 
@@ -181,7 +175,7 @@ public class Square {
         HardRideRenderer.checkGlError("glGetUniformLocation");
 
         // Apply the projection and view transformation
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, scratch, 0);
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
         HardRideRenderer.checkGlError("glUniformMatrix4fv");
 
         // Draw the square
