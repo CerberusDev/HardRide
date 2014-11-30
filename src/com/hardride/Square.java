@@ -37,8 +37,10 @@ public class Square {
     private int mColorHandle;
     private int mMVPMatrixHandle;
     
-    private float mAngle;
-
+    private float mYaw;
+    private float mPitch;
+    private float mRoll;
+    
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
     static float squareCoords[] = {
@@ -80,6 +82,9 @@ public class Square {
      * Sets up the drawing object data for use in an OpenGL ES context.
      */
     public Square(String vShader, String fShader) {
+    	
+    	updateRotationMatrix();
+    	
         // initialize vertex byte buffer for shape coordinates
         ByteBuffer bb = ByteBuffer.allocateDirect(
         // (# of coordinate values * 4 bytes per float)
@@ -135,7 +140,7 @@ public class Square {
 
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, ViewMatrix, 0);
 
-        Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 1.0f, 0);
+        
 
         Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
     	
@@ -187,11 +192,39 @@ public class Square {
         GLES20.glDisableVertexAttribArray(mNormalsHandle);
     }
 
-    public float getAngle() {
-        return mAngle;
+    public float getYaw() {
+        return mYaw;
+    }
+    
+    public float getPitch() {
+        return mPitch;
+    }
+    
+    public float getRoll() {
+        return mRoll;
     }
 
-    public void setAngle(float angle) {
-        mAngle = angle;
+    public void setYaw(float angle) {
+        mYaw = angle;
+        updateRotationMatrix();
+    }
+    
+    public void setPitch(float angle) {
+        mPitch = angle;
+        updateRotationMatrix();
+    }
+    
+    public void setRoll(float angle) {
+        mRoll = angle;
+        updateRotationMatrix();
+    }
+    
+    protected void updateRotationMatrix() {
+    	Matrix.setRotateM(mRotationMatrix, 0, mYaw, 1.0f, 0, 0);
+    	Matrix.rotateM(mRotationMatrix, 0, mPitch, 0, 1.0f, 0);
+    	Matrix.rotateM(mRotationMatrix, 0, mRoll, 0, 0, 1.0f);
+    	
+    	// This function probably can do all of this, but it doesn't work as intended
+    	//Matrix.setRotateEulerM(mRotationMatrix, 0, mYaw, 0.0f, 0.0f);
     }
 }
