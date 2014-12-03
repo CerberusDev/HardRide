@@ -7,9 +7,14 @@
 
 package com.hardride;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -40,13 +45,20 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
        
-    public HardRideRenderer(String vShaderCode, String fShaderCode) {
+    public HardRideRenderer(Context context) {
     	super();
     	
     	mStartTime = SystemClock.uptimeMillis() / 1000.0f;
     	
-    	mVShaderCode = vShaderCode;
-    	mFShaderCode = fShaderCode;
+        try {
+        	AssetManager assetManager = context.getAssets();
+        	InputStream ims = assetManager.open("shaders/basic0.vs");
+        	mVShaderCode = convertStreamToString(ims);
+        	ims = assetManager.open("shaders/basic0.fs");
+        	mFShaderCode = convertStreamToString(ims);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     
     @Override
@@ -166,5 +178,10 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     public void setObjectYPos(float newPos) {
         mSquare.setY(newPos);
+    }
+    
+    static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 }
