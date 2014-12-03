@@ -2,6 +2,7 @@ package com.hardride;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.FloatBuffer;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -39,7 +40,22 @@ public class ShaderSet {
         GLES20.glLinkProgram(ID);                  // create OpenGL program executables
 	}
 
-	public void SetVec4Unfiorm(String uniformName, float[] value) {
+	public void attribEnableAndSetDataFloat(String attribName, int floatsPerVertex, FloatBuffer data) {
+        int attribHandle = GLES20.glGetAttribLocation(ID, attribName);
+        verifyAttribHandle(attribHandle, attribName);
+        
+        GLES20.glEnableVertexAttribArray(attribHandle);
+        
+        GLES20.glVertexAttribPointer(attribHandle, floatsPerVertex, GLES20.GL_FLOAT, false, 0, data);
+        HardRideRenderer.checkGlError("glVertexAttribPointer");
+	}
+	
+	public void attribDisable(String attribName) {
+		int attribHandle = GLES20.glGetAttribLocation(ID, attribName);
+		GLES20.glDisableVertexAttribArray(attribHandle);
+	}
+	
+	public void unfiormSetVec4(String uniformName, float[] value) {
         int uniformHandle = GLES20.glGetUniformLocation(ID, uniformName);
         verifyUniformHandle(uniformHandle, uniformName);
         
@@ -47,7 +63,7 @@ public class ShaderSet {
         HardRideRenderer.checkGlError("glUniform4fv");
 	}
 	
-	public void SetMat4Unfiorm(String uniformName, float[] value) {
+	public void unfiormSetMat4(String uniformName, float[] value) {
         int uniformHandle = GLES20.glGetUniformLocation(ID, uniformName);
         verifyUniformHandle(uniformHandle, uniformName);
         
@@ -55,11 +71,20 @@ public class ShaderSet {
         HardRideRenderer.checkGlError("glUniform4fv");
 	}
 	
-	public void verifyUniformHandle(int uniformHandler, String uniformName) {
+	private void verifyUniformHandle(int uniformHandler, String uniformName) {
 		HardRideRenderer.checkGlError("glGetUniformLocation");
 		if (uniformHandler == -1) {
 			throw new RuntimeException("Set uniform failed!\n" +
 					"Cannot find uniform '" + uniformName + 
+					"' in '" + mShaderName + "' shader!");
+		}
+	}
+	
+	private void verifyAttribHandle(int attribHandler, String attribName) {
+		HardRideRenderer.checkGlError("glGetAttribLocation");
+		if (attribHandler == -1) {
+			throw new RuntimeException("Enable attrib failed!\n" +
+					"Cannot find attribute '" + attribName + 
 					"' in '" + mShaderName + "' shader!");
 		}
 	}

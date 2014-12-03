@@ -33,9 +33,6 @@ public class Square {
     private final FloatBuffer normalBuffer;
     private final ShortBuffer drawListBuffer;
     
-    private int mPositionHandle;
-    private int mNormalsHandle;
-    
     private float mYaw;
     private float mPitch;
     private float mRoll;
@@ -123,52 +120,24 @@ public class Square {
         drawListBuffer.position(0);
     }
 
-    /**
-     * Encapsulates the OpenGL ES instructions for drawing this shape.
-     *
-     * @param mvpMatrix - The Model View Project matrix in which to draw
-     * this shape.
-     */
     public void draw(float[] ViewMatrix, float[] mProjectionMatrix) {
-    	
+        GLES20.glUseProgram(mShader.ID);
+        
         Matrix.multiplyMM(mMVMatrix, 0, ViewMatrix, 0, mModelMatrix, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0);
         
-        // Add program to OpenGL environment
-        GLES20.glUseProgram(mShader.ID);
-
-        // get handle to vertex shader's vPosition member
-        mPositionHandle = GLES20.glGetAttribLocation(mShader.ID, "a_Position");
-
-        // Enable a handle to the triangle vertices
-        GLES20.glEnableVertexAttribArray(mPositionHandle);
-
-        // Prepare the triangle coordinate data
-        GLES20.glVertexAttribPointer(
-                mPositionHandle, COORDS_PER_VERTEX,
-                GLES20.GL_FLOAT, false,
-                0, vertexBuffer);
-
-        mNormalsHandle = GLES20.glGetAttribLocation(mShader.ID, "a_Normal");
-        GLES20.glEnableVertexAttribArray(mNormalsHandle);
+        mShader.unfiormSetMat4("u_MVMatrix", mMVMatrix);
+        mShader.unfiormSetMat4("u_MVPMatrix", mMVPMatrix);
+        mShader.unfiormSetVec4("u_Color", color);
         
-        GLES20.glVertexAttribPointer(
-        		mNormalsHandle, NORMALS_PER_VERTEX,
-                GLES20.GL_FLOAT, false,
-                0, normalBuffer);
-        
-        mShader.SetVec4Unfiorm("u_Color", color);
-        mShader.SetMat4Unfiorm("u_MVMatrix", mMVMatrix);
-        mShader.SetMat4Unfiorm("u_MVPMatrix", mMVPMatrix);
+        mShader.attribEnableAndSetDataFloat("a_Position", COORDS_PER_VERTEX, vertexBuffer);
+        mShader.attribEnableAndSetDataFloat("a_Normal", NORMALS_PER_VERTEX, normalBuffer);
         
         // Draw the square
-        GLES20.glDrawElements(
-                GLES20.GL_TRIANGLES, drawOrder.length,
-                GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
 
-        // Disable vertex array
-        GLES20.glDisableVertexAttribArray(mPositionHandle);
-        GLES20.glDisableVertexAttribArray(mNormalsHandle);
+        mShader.attribDisable("a_Position");
+        mShader.attribDisable("a_Normal");
     }
 
     public float getYaw() {
