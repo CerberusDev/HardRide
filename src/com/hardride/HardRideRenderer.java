@@ -7,14 +7,10 @@
 
 package com.hardride;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -35,11 +31,10 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private static final String TAG = "HardRideRenderer";
     
     private Square   mSquare;
-
-    private String 	mVShaderCode;
-    private String 	mFShaderCode;
-    
+  
     private float 	mStartTime;
+    
+    private Context mContext;
     
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mProjectionMatrix = new float[16];
@@ -48,17 +43,8 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     public HardRideRenderer(Context context) {
     	super();
     	
+    	mContext = context;
     	mStartTime = SystemClock.uptimeMillis() / 1000.0f;
-    	
-        try {
-        	AssetManager assetManager = context.getAssets();
-        	InputStream ims = assetManager.open("shaders/basic0.vs");
-        	mVShaderCode = convertStreamToString(ims);
-        	ims = assetManager.open("shaders/basic0.fs");
-        	mFShaderCode = convertStreamToString(ims);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
     }
     
     @Override
@@ -67,7 +53,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         // Set the background frame color
         GLES20.glClearColor(0.0f, 0.0f, 0.3f, 1.0f);
 
-        mSquare = new Square(mVShaderCode, mFShaderCode);
+        mSquare = new Square(new ShaderSet(mContext, "basic0"));
         mSquare.setZ(5.0f);
     }
 
@@ -108,43 +94,6 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     }
 
     /**
-     * Utility method for compiling a OpenGL shader.
-     *
-     * <p><strong>Note:</strong> When developing shaders, use the checkGlError()
-     * method to debug shader coding errors.</p>
-     *
-     * @param type - Vertex or fragment shader type.
-     * @param shaderCode - String containing the shader code.
-     * @return - Returns an id for the shader.
-     */
-    public static int loadShader(int type, String shaderCode){
-
-        // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
-        // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
-        int shader = GLES20.glCreateShader(type);
-
-        // add the source code to the shader and compile it
-        GLES20.glShaderSource(shader, shaderCode);
-        GLES20.glCompileShader(shader);
-
-        final int[] compileStatus = new int[1];
-        GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compileStatus, 0);
-        
-        if (compileStatus[0] == 0) {
-        	// glGetShaderInfoLog() doesn't work :( For possible solution look here: 
-        	// http://stackoverflow.com/questions/4588800/glgetshaderinfolog-returns-empty-string-android
-        	// and here:
-        	// http://stackoverflow.com/questions/24122075/the-import-com-badlogic-cannot-be-resolved-in-java-project-libgdx-setup
-        	Log.e("ShaderCompiler", "Error compiling shader: " + GLES20.glGetShaderInfoLog(shader));
-        	GLES20.glDeleteShader(shader);
-        	shader = 0;
-        	throw new RuntimeException("Error during compiling shader");
-        }
-        
-        return shader;
-    }
-
-    /**
     * Utility method for debugging OpenGL calls. Provide the name of the call
     * just after making it:
     *
@@ -178,10 +127,5 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     public void setObjectYPos(float newPos) {
         mSquare.setY(newPos);
-    }
-    
-    static String convertStreamToString(java.io.InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
     }
 }

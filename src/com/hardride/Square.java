@@ -27,11 +27,12 @@ import android.opengl.Matrix;
  * A two-dimensional square for use as a drawn object in OpenGL ES 2.0.
  */
 public class Square {
-
+	private ShaderSet mShader;
+	
     private final FloatBuffer vertexBuffer;
     private final FloatBuffer normalBuffer;
     private final ShortBuffer drawListBuffer;
-    private final int mProgram;
+    
     private int mPositionHandle;
     private int mNormalsHandle;
     private int mColorHandle;
@@ -92,7 +93,8 @@ public class Square {
     /**
      * Sets up the drawing object data for use in an OpenGL ES context.
      */
-    public Square(String vShader, String fShader) {
+    public Square(ShaderSet shaderProgram) {
+    	mShader = shaderProgram;
     	
     	updateRotationMatrix();
     	updateTranslationMatrix();
@@ -122,20 +124,6 @@ public class Square {
         drawListBuffer = dlb.asShortBuffer();
         drawListBuffer.put(drawOrder);
         drawListBuffer.position(0);
-        
-        // prepare shaders and OpenGL program
-        int vertexShader = HardRideRenderer.loadShader(
-                GLES20.GL_VERTEX_SHADER,
-                vShader);
-
-        int fragmentShader = HardRideRenderer.loadShader(
-                GLES20.GL_FRAGMENT_SHADER,
-                fShader);
-
-        mProgram = GLES20.glCreateProgram();             // create empty OpenGL Program
-        GLES20.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
-        GLES20.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
-        GLES20.glLinkProgram(mProgram);                  // create OpenGL program executables
     }
 
     /**
@@ -150,10 +138,10 @@ public class Square {
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0);
         
         // Add program to OpenGL environment
-        GLES20.glUseProgram(mProgram);
+        GLES20.glUseProgram(mShader.ID);
 
         // get handle to vertex shader's vPosition member
-        mPositionHandle = GLES20.glGetAttribLocation(mProgram, "a_Position");
+        mPositionHandle = GLES20.glGetAttribLocation(mShader.ID, "a_Position");
 
         // Enable a handle to the triangle vertices
         GLES20.glEnableVertexAttribArray(mPositionHandle);
@@ -164,7 +152,7 @@ public class Square {
                 GLES20.GL_FLOAT, false,
                 0, vertexBuffer);
 
-        mNormalsHandle = GLES20.glGetAttribLocation(mProgram, "a_Normal");
+        mNormalsHandle = GLES20.glGetAttribLocation(mShader.ID, "a_Normal");
         GLES20.glEnableVertexAttribArray(mNormalsHandle);
         
         GLES20.glVertexAttribPointer(
@@ -173,19 +161,19 @@ public class Square {
                 0, normalBuffer);
         
         // get handle to fragment shader's vColor member
-        mColorHandle = GLES20.glGetUniformLocation(mProgram, "u_Color");
+        mColorHandle = GLES20.glGetUniformLocation(mShader.ID, "u_Color");
 
         // Set color for drawing the triangle
         GLES20.glUniform4fv(mColorHandle, 1, color, 0);
 
 
-        mMVMatrixHandle = GLES20.glGetUniformLocation(mProgram, "u_MVMatrix");
+        mMVMatrixHandle = GLES20.glGetUniformLocation(mShader.ID, "u_MVMatrix");
         HardRideRenderer.checkGlError("glGetUniformLocation");
 
         GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mMVMatrix, 0);
         HardRideRenderer.checkGlError("glUniformMatrix4fv");
 
-        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "u_MVPMatrix");
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mShader.ID, "u_MVPMatrix");
         HardRideRenderer.checkGlError("glGetUniformLocation");
 
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
