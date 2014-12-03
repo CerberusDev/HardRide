@@ -42,7 +42,13 @@ public class Square {
     private float mPitch;
     private float mRoll;
     
+    private float mX;
+    private float mY;
+    private float mZ;
+    
     private final float[] mRotationMatrix = new float[16];
+    private final float[] mTranslationMatrix = new float[16];
+    private final float[] mModelMatrix = new float[16];
     
     private static final float[] mMVMatrix = new float[16];
     private static final float[] mMVPMatrix = new float[16];
@@ -89,6 +95,7 @@ public class Square {
     public Square(String vShader, String fShader) {
     	
     	updateRotationMatrix();
+    	updateTranslationMatrix();
     	
         // initialize vertex byte buffer for shape coordinates
         ByteBuffer bb = ByteBuffer.allocateDirect(
@@ -139,7 +146,7 @@ public class Square {
      */
     public void draw(float[] ViewMatrix, float[] mProjectionMatrix) {
     	
-        Matrix.multiplyMM(mMVMatrix, 0, ViewMatrix, 0, mRotationMatrix, 0);
+        Matrix.multiplyMM(mMVMatrix, 0, ViewMatrix, 0, mModelMatrix, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0);
         
         // Add program to OpenGL environment
@@ -221,6 +228,33 @@ public class Square {
         updateRotationMatrix();
     }
     
+    public float getX() {
+        return mX;
+    }
+    
+    public float getY() {
+        return mY;
+    }
+    
+    public float getZ() {
+        return mZ;
+    }
+
+    public void setX(float newPos) {
+    	mX = newPos;
+    	updateTranslationMatrix();
+    }
+    
+    public void setY(float newPos) {
+    	mY = newPos;
+    	updateTranslationMatrix();
+    }
+    
+    public void setZ(float newPos) {
+    	mZ = newPos;
+    	updateTranslationMatrix();
+    }
+    
     protected void updateRotationMatrix() {
     	Matrix.setRotateM(mRotationMatrix, 0, mYaw, 1.0f, 0, 0);
     	Matrix.rotateM(mRotationMatrix, 0, mPitch, 0, 1.0f, 0);
@@ -228,5 +262,14 @@ public class Square {
     	
     	// This function probably can do all of this, but it doesn't work as intended
     	//Matrix.setRotateEulerM(mRotationMatrix, 0, mYaw, 0.0f, 0.0f);
+    	
+    	Matrix.multiplyMM(mModelMatrix, 0, mTranslationMatrix, 0, mRotationMatrix, 0);
+    }
+    
+    protected void updateTranslationMatrix() {
+    	Matrix.setIdentityM(mTranslationMatrix, 0);
+    	Matrix.translateM(mTranslationMatrix, 0, mX, mY, mZ);
+    	
+    	Matrix.multiplyMM(mModelMatrix, 0, mTranslationMatrix, 0, mRotationMatrix, 0);
     }
 }

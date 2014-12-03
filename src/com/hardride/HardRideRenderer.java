@@ -13,6 +13,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.SystemClock;
 import android.util.Log;
 
 /**
@@ -33,12 +34,16 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private String 	mVShaderCode;
     private String 	mFShaderCode;
     
+    private float 	mStartTime;
+    
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
        
     public HardRideRenderer(String vShaderCode, String fShaderCode) {
     	super();
+    	
+    	mStartTime = SystemClock.uptimeMillis() / 1000.0f;
     	
     	mVShaderCode = vShaderCode;
     	mFShaderCode = fShaderCode;
@@ -50,7 +55,8 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         // Set the background frame color
         GLES20.glClearColor(0.0f, 0.0f, 0.3f, 1.0f);
 
-        mSquare   = new Square(mVShaderCode, mFShaderCode);
+        mSquare = new Square(mVShaderCode, mFShaderCode);
+        mSquare.setZ(5.0f);
     }
 
     @Override
@@ -66,6 +72,10 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glCullFace(GLES20.GL_BACK);
    
         Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, -15.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
+        
+        float time = SystemClock.uptimeMillis() / 1000.0f - mStartTime;
+        mSquare.setYaw(13.0f * time);
+        mSquare.setPitch(110.0f * time);
         
         // Draw square
         mSquare.draw(mViewMatrix, mProjectionMatrix);
@@ -142,20 +152,19 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         }
     }
 
-    /**
-     * Returns the rotation angle of the triangle shape (mTriangle).
-     *
-     * @return - A float representing the rotation angle.
-     */
-    public float getAngle() {
-        return mSquare.getPitch();
+    public float getObjectXPos() {
+        return mSquare.getX();
     }
 
-    /**
-     * Sets the rotation angle of the triangle shape (mTriangle).
-     */
-    public void setAngle(float angle) {
-        mSquare.setPitch(angle);
+    public void setObjectXPos(float newPos) {
+        mSquare.setX(newPos);
     }
 
+    public float getObjectYPos() {
+        return mSquare.getY();
+    }
+
+    public void setObjectYPos(float newPos) {
+        mSquare.setY(newPos);
+    }
 }
