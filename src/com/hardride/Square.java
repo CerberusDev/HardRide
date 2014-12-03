@@ -35,9 +35,6 @@ public class Square {
     
     private int mPositionHandle;
     private int mNormalsHandle;
-    private int mColorHandle;
-    private int mMVPMatrixHandle;
-    private int mMVMatrixHandle;
     
     private float mYaw;
     private float mPitch;
@@ -160,24 +157,9 @@ public class Square {
                 GLES20.GL_FLOAT, false,
                 0, normalBuffer);
         
-        // get handle to fragment shader's vColor member
-        mColorHandle = GLES20.glGetUniformLocation(mShader.ID, "u_Color");
-
-        // Set color for drawing the triangle
-        GLES20.glUniform4fv(mColorHandle, 1, color, 0);
-
-
-        mMVMatrixHandle = GLES20.glGetUniformLocation(mShader.ID, "u_MVMatrix");
-        HardRideRenderer.checkGlError("glGetUniformLocation");
-
-        GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mMVMatrix, 0);
-        HardRideRenderer.checkGlError("glUniformMatrix4fv");
-
-        mMVPMatrixHandle = GLES20.glGetUniformLocation(mShader.ID, "u_MVPMatrix");
-        HardRideRenderer.checkGlError("glGetUniformLocation");
-
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
-        HardRideRenderer.checkGlError("glUniformMatrix4fv");
+        mShader.SetVec4Unfiorm("u_Color", color);
+        mShader.SetMat4Unfiorm("u_MVMatrix", mMVMatrix);
+        mShader.SetMat4Unfiorm("u_MVPMatrix", mMVPMatrix);
         
         // Draw the square
         GLES20.glDrawElements(

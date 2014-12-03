@@ -12,23 +12,26 @@ public class ShaderSet {
 	
 	public final int ID;
 	
-    private String 	mVShaderCode;
-    private String 	mFShaderCode;
+    private String mShaderName;
 	
 	public ShaderSet(Context context, String shaderName) {
+		mShaderName = shaderName;
+		String vShaderCode = new String();
+		String fShaderCode = new String();
+		
 		try {
         	AssetManager assetManager = context.getAssets();
-        	InputStream ims = assetManager.open("shaders/" + shaderName + ".vs");
-        	mVShaderCode = convertStreamToString(ims);
-        	ims = assetManager.open("shaders/" + shaderName + ".fs");
-        	mFShaderCode = convertStreamToString(ims);
+        	InputStream ims = assetManager.open("shaders/" + mShaderName + ".vs");
+        	vShaderCode = convertStreamToString(ims);
+        	ims = assetManager.open("shaders/" + mShaderName + ".fs");
+        	fShaderCode = convertStreamToString(ims);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
         // prepare shaders and OpenGL program
-        int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, mVShaderCode);
-        int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, mFShaderCode);
+        int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vShaderCode);
+        int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fShaderCode);
 
         ID = GLES20.glCreateProgram();             // create empty OpenGL Program
         GLES20.glAttachShader(ID, vertexShader);   // add the vertex shader to program
@@ -36,6 +39,31 @@ public class ShaderSet {
         GLES20.glLinkProgram(ID);                  // create OpenGL program executables
 	}
 
+	public void SetVec4Unfiorm(String uniformName, float[] value) {
+        int uniformHandle = GLES20.glGetUniformLocation(ID, uniformName);
+        verifyUniformHandle(uniformHandle, uniformName);
+        
+        GLES20.glUniform4fv(uniformHandle, 1, value, 0);
+        HardRideRenderer.checkGlError("glUniform4fv");
+	}
+	
+	public void SetMat4Unfiorm(String uniformName, float[] value) {
+        int uniformHandle = GLES20.glGetUniformLocation(ID, uniformName);
+        verifyUniformHandle(uniformHandle, uniformName);
+        
+        GLES20.glUniformMatrix4fv(uniformHandle, 1, false, value, 0);
+        HardRideRenderer.checkGlError("glUniform4fv");
+	}
+	
+	public void verifyUniformHandle(int uniformHandler, String uniformName) {
+		HardRideRenderer.checkGlError("glGetUniformLocation");
+		if (uniformHandler == -1) {
+			throw new RuntimeException("Set uniform failed!\n" +
+					"Cannot find uniform '" + uniformName + 
+					"' in '" + mShaderName + "' shader!");
+		}
+	}
+	
     public static int loadShader(int type, String shaderCode) {
         int shader = GLES20.glCreateShader(type);
         GLES20.glShaderSource(shader, shaderCode);
