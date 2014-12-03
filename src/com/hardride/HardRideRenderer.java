@@ -30,13 +30,10 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "HardRideRenderer";
     
-    private Square   mSquare;
-  
+    private Square  mSquare;
+    private Context mContext;  
     private float 	mStartTime;
     
-    private Context mContext;
-    
-    // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
        

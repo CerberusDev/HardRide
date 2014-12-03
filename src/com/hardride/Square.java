@@ -44,18 +44,16 @@ public class Square {
     private final float[] mRotationMatrix = new float[16];
     private final float[] mTranslationMatrix = new float[16];
     private final float[] mModelMatrix = new float[16];
+    private final float[] mMVMatrix = new float[16];
+    private final float[] mMVPMatrix = new float[16];
     
-    private static final float[] mMVMatrix = new float[16];
-    private static final float[] mMVPMatrix = new float[16];
-    
-    // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
     static float squareCoords[] = {
-            -5.0f,  5.0f, -5.0f,   	// top 		left 	near
-            -5.0f, -5.0f, -5.0f,   	// bottom 	left	near
-             5.0f, -5.0f, -5.0f,   	// bottom 	right	near
-             5.0f,  5.0f, -5.0f, 	// top 		right	near
-    		-5.0f,  5.0f,  5.0f,   	// top 		left 	far
+	        -5.0f,  5.0f, -5.0f,   	// top 		left 	near
+	        -5.0f, -5.0f, -5.0f,   	// bottom 	left	near
+	         5.0f, -5.0f, -5.0f,   	// bottom 	right	near
+	         5.0f,  5.0f, -5.0f, 	// top 		right	near
+			-5.0f,  5.0f,  5.0f,   	// top 		left 	far
 			-5.0f, -5.0f,  5.0f,   	// bottom 	left	far
 			 5.0f, -5.0f,  5.0f,   	// bottom 	right	far
 		 	 5.0f,  5.0f,  5.0f 	// top 		right	far
@@ -63,30 +61,25 @@ public class Square {
     
     static final int NORMALS_PER_VERTEX = 3;
     static float squareNormals[] = {
-        -1.0f,  1.0f, -1.0f,   	// top 		left 	near
-        -1.0f, -1.0f, -1.0f,   	// bottom 	left	near
-         1.0f, -1.0f, -1.0f,   	// bottom 	right	near
-         1.0f,  1.0f, -1.0f, 	// top 		right	near
-		-1.0f,  1.0f,  1.0f,   	// top 		left 	far
-		-1.0f, -1.0f,  1.0f,   	// bottom 	left	far
-		 1.0f, -1.0f,  1.0f,   	// bottom 	right	far
-	 	 1.0f,  1.0f,  1.0f 	// top 		right	far
-		 }; 	
+	        -1.0f,  1.0f, -1.0f,   	// top 		left 	near
+	        -1.0f, -1.0f, -1.0f,   	// bottom 	left	near
+	         1.0f, -1.0f, -1.0f,   	// bottom 	right	near
+	         1.0f,  1.0f, -1.0f, 	// top 		right	near
+			-1.0f,  1.0f,  1.0f,   	// top 		left 	far
+			-1.0f, -1.0f,  1.0f,   	// bottom 	left	far
+			 1.0f, -1.0f,  1.0f,   	// bottom 	right	far
+		 	 1.0f,  1.0f,  1.0f 	// top 		right	far
+			 }; 	
 
-    private final short drawOrder[] = { 
-    		0, 2, 1, 0, 3, 2,
-    		4, 5, 6, 4, 6, 7,
-    		3, 6, 2, 3, 7, 6,
-    		4, 1, 5, 4, 0, 1, 
-    		4, 3, 0, 4, 7, 3,
-    		1, 6, 5, 1, 2, 6,
-    		};
-
-    float color[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+    static final short drawOrder[] = { 
+			0, 2, 1, 0, 3, 2,
+			4, 5, 6, 4, 6, 7,
+			3, 6, 2, 3, 7, 6,
+			4, 1, 5, 4, 0, 1, 
+			4, 3, 0, 4, 7, 3,
+			1, 6, 5, 1, 2, 6,
+			};
     
-    /**
-     * Sets up the drawing object data for use in an OpenGL ES context.
-     */
     public Square(ShaderSet shaderProgram) {
     	mShader = shaderProgram;
     	
@@ -94,41 +87,38 @@ public class Square {
     	updateTranslationMatrix();
     	
         // initialize vertex byte buffer for shape coordinates
-        ByteBuffer bb = ByteBuffer.allocateDirect(
-        // (# of coordinate values * 4 bytes per float)
-                squareCoords.length * 4);
+        ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);	// 4 bytes for float
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(squareCoords);
         vertexBuffer.position(0);
-
-        ByteBuffer nbb = ByteBuffer.allocateDirect(
-        // (# of coordinate values * 4 bytes per float)
-                squareNormals.length * 4);
+        
+        // initialize vertex byte buffer for shape normals
+        ByteBuffer nbb = ByteBuffer.allocateDirect(squareNormals.length * 4);	// 4 bytes for float
         nbb.order(ByteOrder.nativeOrder());
         normalBuffer = nbb.asFloatBuffer();
         normalBuffer.put(squareNormals);
         normalBuffer.position(0);
         
         // initialize byte buffer for the draw list
-        ByteBuffer dlb = ByteBuffer.allocateDirect(
-                // (# of coordinate values * 2 bytes per short)
-                drawOrder.length * 2);
+        ByteBuffer dlb = ByteBuffer.allocateDirect(drawOrder.length * 2);	// 2 bytes for short
         dlb.order(ByteOrder.nativeOrder());
         drawListBuffer = dlb.asShortBuffer();
         drawListBuffer.put(drawOrder);
         drawListBuffer.position(0);
+        
+        mShader.use();
+        mShader.unfiormSetVec4("u_Color", new float[]{1.0f, 0.0f, 0.0f, 1.0f});
     }
 
     public void draw(float[] ViewMatrix, float[] mProjectionMatrix) {
-        GLES20.glUseProgram(mShader.ID);
+        mShader.use();
         
         Matrix.multiplyMM(mMVMatrix, 0, ViewMatrix, 0, mModelMatrix, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0);
         
         mShader.unfiormSetMat4("u_MVMatrix", mMVMatrix);
         mShader.unfiormSetMat4("u_MVPMatrix", mMVPMatrix);
-        mShader.unfiormSetVec4("u_Color", color);
         
         mShader.attribEnableAndSetDataFloat("a_Position", COORDS_PER_VERTEX, vertexBuffer);
         mShader.attribEnableAndSetDataFloat("a_Normal", NORMALS_PER_VERTEX, normalBuffer);
@@ -151,7 +141,19 @@ public class Square {
     public float getRoll() {
         return mRoll;
     }
-
+    
+    public float getX() {
+        return mX;
+    }
+    
+    public float getY() {
+        return mY;
+    }
+    
+    public float getZ() {
+        return mZ;
+    }
+    
     public void setYaw(float angle) {
         mYaw = angle;
         updateRotationMatrix();
@@ -165,18 +167,6 @@ public class Square {
     public void setRoll(float angle) {
         mRoll = angle;
         updateRotationMatrix();
-    }
-    
-    public float getX() {
-        return mX;
-    }
-    
-    public float getY() {
-        return mY;
-    }
-    
-    public float getZ() {
-        return mZ;
     }
 
     public void setX(float newPos) {
@@ -199,7 +189,7 @@ public class Square {
     	Matrix.rotateM(mRotationMatrix, 0, mPitch, 0, 1.0f, 0);
     	Matrix.rotateM(mRotationMatrix, 0, mRoll, 0, 0, 1.0f);
     	
-    	// This function probably can do all of this, but it doesn't work as intended
+    	// All above can be probably done by this function, but it doesn't work as intended
     	//Matrix.setRotateEulerM(mRotationMatrix, 0, mYaw, 0.0f, 0.0f);
     	
     	Matrix.multiplyMM(mModelMatrix, 0, mTranslationMatrix, 0, mRotationMatrix, 0);

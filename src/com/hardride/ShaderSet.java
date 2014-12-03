@@ -1,3 +1,10 @@
+/*
+ * Hard Ride
+ * 
+ * Copyright (C) 2014
+ *
+ */
+
 package com.hardride;
 
 import java.io.IOException;
@@ -12,7 +19,6 @@ import android.util.Log;
 public class ShaderSet {
 	
 	public final int ID;
-	
     private String mShaderName;
 	
 	public ShaderSet(Context context, String shaderName) {
@@ -30,7 +36,6 @@ public class ShaderSet {
 			e.printStackTrace();
 		}
 		
-        // prepare shaders and OpenGL program
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vShaderCode);
         int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fShaderCode);
 
@@ -40,6 +45,10 @@ public class ShaderSet {
         GLES20.glLinkProgram(ID);                  // create OpenGL program executables
 	}
 
+	public void use() {
+		GLES20.glUseProgram(ID);
+	}
+	
 	public void attribEnableAndSetDataFloat(String attribName, int floatsPerVertex, FloatBuffer data) {
         int attribHandle = GLES20.glGetAttribLocation(ID, attribName);
         verifyAttribHandle(attribHandle, attribName);
