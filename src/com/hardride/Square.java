@@ -31,7 +31,7 @@ public class Square {
 	
     private final FloatBuffer vertexBuffer;
     private final FloatBuffer normalBuffer;
-    private final ShortBuffer drawListBuffer;
+    private final ShortBuffer indexBuffer;
     
     private float mYaw;
     private float mPitch;
@@ -103,9 +103,9 @@ public class Square {
         // initialize byte buffer for the draw list
         ByteBuffer dlb = ByteBuffer.allocateDirect(drawOrder.length * 2);	// 2 bytes for short
         dlb.order(ByteOrder.nativeOrder());
-        drawListBuffer = dlb.asShortBuffer();
-        drawListBuffer.put(drawOrder);
-        drawListBuffer.position(0);
+        indexBuffer = dlb.asShortBuffer();
+        indexBuffer.put(drawOrder);
+        indexBuffer.position(0);
         
         mShader.use();
         mShader.unfiormSetVec4("u_Color", new float[]{1.0f, 0.0f, 0.0f, 1.0f});
@@ -124,7 +124,7 @@ public class Square {
         mShader.attribEnableAndSetDataFloat("a_Normal", NORMALS_PER_VERTEX, normalBuffer);
         
         // Draw the square
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, indexBuffer);
 
         mShader.attribDisable("a_Position");
         mShader.attribDisable("a_Normal");
