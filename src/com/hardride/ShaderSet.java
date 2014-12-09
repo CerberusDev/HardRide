@@ -32,6 +32,7 @@ public class ShaderSet {
         	vShaderCode = convertStreamToString(ims);
         	ims = assetManager.open("shaders/" + mShaderName + ".fs");
         	fShaderCode = convertStreamToString(ims);
+        	ims.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

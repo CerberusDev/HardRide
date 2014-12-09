@@ -30,7 +30,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "HardRideRenderer";
     
-    private Square  mSquare;
+    private DebugCube  mCube;
     private Context mContext;  
     private float 	mStartTime;
     
@@ -50,8 +50,8 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         // Set the background frame color
         GLES20.glClearColor(0.0f, 0.0f, 0.3f, 1.0f);
 
-        mSquare = new Square(new ShaderSet(mContext, "basic0"));
-        mSquare.setZ(5.0f);
+        mCube = new DebugCube(new ShaderSet(mContext, "basic0"), mContext);
+        mCube.setZ(5.0f);
     }
 
     @Override
@@ -69,11 +69,11 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, -15.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
         
         float time = SystemClock.uptimeMillis() / 1000.0f - mStartTime;
-        mSquare.setYaw(13.0f * time);
-        mSquare.setPitch(110.0f * time);
+        mCube.setYaw(13.0f * time);
+        mCube.setPitch(110.0f * time);
         
         // Draw square
-        mSquare.draw(mViewMatrix, mProjectionMatrix);
+        mCube.draw(mViewMatrix, mProjectionMatrix);
     }
 
     @Override
@@ -111,18 +111,18 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     }
 
     public float getObjectXPos() {
-        return mSquare.getX();
+        return mCube.getX();
     }
 
     public void setObjectXPos(float newPos) {
-        mSquare.setX(newPos);
+    	mCube.setX(newPos);
     }
 
     public float getObjectYPos() {
-        return mSquare.getY();
+        return mCube.getY();
     }
 
     public void setObjectYPos(float newPos) {
-        mSquare.setY(newPos);
+    	mCube.setY(newPos);
     }
 }
