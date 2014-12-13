@@ -1,0 +1,6 @@
+Niesamowite, ale od 3 lat wystêpuje bug, który niesamowicie utrudnia robotê: Kiedy sfailuje kompilacja shadera, wywo³anie polecenia glGetShaderInfoLog() wypluwa pusty string. Wystêpuje to na niektórych urz¹dzeniach.
+
+http://stackoverflow.com/questions/4588800/glgetshaderinfolog-returns-empty-string-android
+
+
+Pierwsze problemy z wydajnoœci¹: narysowanie ok 120 kostek (cube, 6 vert, 12 tris). Cieniowanie Phonga: 11-12 FPS, Cieniowanie Gourauda: 11-12 FPS, Brak oœwietlenia: 12-13 FPS. Funkcja, która wo³a draw() na 120 kostkach zajmuje ok. 84ms, co jest jak¹œ tragedi¹.
