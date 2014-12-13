@@ -20,6 +20,7 @@ public class ShaderSet {
 	
 	public static final String S_PHONG = "phong0";
 	public static final String S_GOURAUD = "gouraud0";
+	public static final String S_UNLIT = "unlit0";
 	
 	public final int ID;
     private String mShaderName;
