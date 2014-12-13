@@ -4,3 +4,7 @@ http://stackoverflow.com/questions/4588800/glgetshaderinfolog-returns-empty-stri
 
 
 Pierwsze problemy z wydajnoœci¹: narysowanie ok 120 kostek (cube, 6 vert, 12 tris). Cieniowanie Phonga: 11-12 FPS, Cieniowanie Gourauda: 11-12 FPS, Brak oœwietlenia: 12-13 FPS. Funkcja, która wo³a draw() na 120 kostkach zajmuje ok. 84ms, co jest jak¹œ tragedi¹.
+
+Wyrzucaj¹c wyznaczanie macierzy Model-Widok i Model-Widok-Projekcja co klatkê zyskujemy ok. 3ms, wiêc w zasadzie du¿o, ale ma³o w porównaniu do pozosta³ych 80ciu.
+
+Po przerobieniu uzyskiwania atrybutów uniformów i atrybutów (zapamiêtane, zamiast wywo³ywania glGetXxxLocation() za ka¿dym razem) jest skok do 15-16 FPSów, draw zajmuje ok. 63ms.

@@ -10,7 +10,6 @@ package com.hardride;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.FloatBuffer;
-
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.opengl.GLES20;
@@ -18,13 +17,12 @@ import android.util.Log;
 
 public class ShaderSet {
 	
-	public static final String S_PHONG = "phong0";
-	public static final String S_GOURAUD = "gouraud0";
-	public static final String S_UNLIT = "unlit0";
+	public final int mID;
+	protected String mShaderName;
 	
-	public final int ID;
-    private String mShaderName;
-	
+    //protected HashMap<String, Integer> mAttribs = new HashMap<String, Integer>();
+    //protected HashMap<String, Integer> mUniforms = new HashMap<String, Integer>();
+    
 	public ShaderSet(Context context, String shaderName) {
 		mShaderName = shaderName;
 		String vShaderCode = new String();
@@ -44,48 +42,50 @@ public class ShaderSet {
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vShaderCode);
         int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fShaderCode);
 
-        ID = GLES20.glCreateProgram();             // create empty OpenGL Program
-        GLES20.glAttachShader(ID, vertexShader);   // add the vertex shader to program
-        GLES20.glAttachShader(ID, fragmentShader); // add the fragment shader to program
-        GLES20.glLinkProgram(ID);                  // create OpenGL program executables
+        mID = GLES20.glCreateProgram();             // create empty OpenGL Program
+        GLES20.glAttachShader(mID, vertexShader);   // add the vertex shader to program
+        GLES20.glAttachShader(mID, fragmentShader); // add the fragment shader to program
+        GLES20.glLinkProgram(mID);                  // create OpenGL program executables
 	}
 
 	public void use() {
-		GLES20.glUseProgram(ID);
+		GLES20.glUseProgram(mID);
 	}
 	
-	public void attribEnableAndSetDataFloat(String attribName, int floatsPerVertex, FloatBuffer data) {
-        int attribHandle = GLES20.glGetAttribLocation(ID, attribName);
-        verifyAttribHandle(attribHandle, attribName);
+	public void attribEnableAndSetDataFloat(int attribID, int floatsPerVertex, FloatBuffer data) {      
+        GLES20.glEnableVertexAttribArray(attribID);
         
-        GLES20.glEnableVertexAttribArray(attribHandle);
-        
-        GLES20.glVertexAttribPointer(attribHandle, floatsPerVertex, GLES20.GL_FLOAT, false, 0, data);
+        GLES20.glVertexAttribPointer(attribID, floatsPerVertex, GLES20.GL_FLOAT, false, 0, data);
         HardRideRenderer.checkGlError("glVertexAttribPointer");
 	}
 	
-	public void attribDisable(String attribName) {
-		int attribHandle = GLES20.glGetAttribLocation(ID, attribName);
-		GLES20.glDisableVertexAttribArray(attribHandle);
+	public void attribDisable(int attribID) {
+		GLES20.glDisableVertexAttribArray(attribID);
 	}
 	
-	public void unfiormSetVec4(String uniformName, float[] value) {
-        int uniformHandle = GLES20.glGetUniformLocation(ID, uniformName);
-        verifyUniformHandle(uniformHandle, uniformName);
-        
-        GLES20.glUniform4fv(uniformHandle, 1, value, 0);
+	public void unfiormSetVec4(int uniformID, float[] value) {       
+        GLES20.glUniform4fv(uniformID, 1, value, 0);
         HardRideRenderer.checkGlError("glUniform4fv");
 	}
 	
-	public void unfiormSetMat4(String uniformName, float[] value) {
-        int uniformHandle = GLES20.glGetUniformLocation(ID, uniformName);
-        verifyUniformHandle(uniformHandle, uniformName);
-        
-        GLES20.glUniformMatrix4fv(uniformHandle, 1, false, value, 0);
+	public void unfiormSetMat4(int uniformID, float[] value) {       
+        GLES20.glUniformMatrix4fv(uniformID, 1, false, value, 0);
         HardRideRenderer.checkGlError("glUniform4fv");
 	}
 	
-	private void verifyUniformHandle(int uniformHandler, String uniformName) {
+	protected int getAttribID(String name) {
+		int attribHandle = GLES20.glGetAttribLocation(mID, name);
+		verifyAttribHandle(attribHandle, name);
+		return attribHandle;
+	}
+	
+	protected int getUniformID(String name) {
+        int uniformHandle = GLES20.glGetUniformLocation(mID, name);
+        verifyUniformHandle(uniformHandle, name);		
+        return uniformHandle;
+	}
+	
+	protected void verifyUniformHandle(int uniformHandler, String uniformName) {
 		HardRideRenderer.checkGlError("glGetUniformLocation");
 		if (uniformHandler == -1) {
 			throw new RuntimeException("Set uniform failed!\n" +
@@ -94,7 +94,7 @@ public class ShaderSet {
 		}
 	}
 	
-	private void verifyAttribHandle(int attribHandler, String attribName) {
+	protected void verifyAttribHandle(int attribHandler, String attribName) {
 		HardRideRenderer.checkGlError("glGetAttribLocation");
 		if (attribHandler == -1) {
 			throw new RuntimeException("Enable attrib failed!\n" +
