@@ -34,6 +34,9 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private Context mContext;  
     private float 	mStartTime;
     
+    private float mLastFPSUpdateTime = 0.0f;
+    private int mFPS = 0;
+    
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
        
@@ -41,7 +44,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     	super();
     	
     	mContext = context;
-    	mStartTime = SystemClock.uptimeMillis() / 1000.0f;
+    	mStartTime = SystemClock.uptimeMillis();
     }
     
     @Override
@@ -55,8 +58,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     }
 
     @Override
-    public void onDrawFrame(GL10 unused) {
-
+    public void onDrawFrame(GL10 unused) {	
         // Draw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -68,12 +70,20 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
    
         Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, -15.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
         
-        float time = SystemClock.uptimeMillis() / 1000.0f - mStartTime;
-        mCube.setYaw(13.0f * time);
-        mCube.setPitch(110.0f * time);
+        float currTime = SystemClock.uptimeMillis();
+        float programDuration = currTime - mStartTime;
+        mCube.setYaw(0.013f * programDuration);
+        mCube.setPitch(0.11f * programDuration);
         
         // Draw square
         mCube.draw(mViewMatrix, mProjectionMatrix);
+        
+        if (currTime > mLastFPSUpdateTime + 1000.0f) {
+        	mLastFPSUpdateTime = currTime;
+        	Log.i(TAG, "FPS: " + mFPS);
+        	mFPS = 0;
+        }
+        mFPS++;
     }
 
     @Override
