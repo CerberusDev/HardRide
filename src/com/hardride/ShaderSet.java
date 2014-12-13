@@ -18,6 +18,9 @@ import android.util.Log;
 
 public class ShaderSet {
 	
+	public static final String S_PHONG = "phong0";
+	public static final String S_GOURAUD = "gouraud0";
+	
 	public final int ID;
     private String mShaderName;
 	
@@ -99,7 +102,7 @@ public class ShaderSet {
 		}
 	}
 	
-    public static int loadShader(int type, String shaderCode) {
+    public int loadShader(int type, String shaderCode) {
         int shader = GLES20.glCreateShader(type);
         GLES20.glShaderSource(shader, shaderCode);
         GLES20.glCompileShader(shader);
@@ -112,7 +115,7 @@ public class ShaderSet {
         	// http://stackoverflow.com/questions/4588800/glgetshaderinfolog-returns-empty-string-android
         	// and here:
         	// http://stackoverflow.com/questions/24122075/the-import-com-badlogic-cannot-be-resolved-in-java-project-libgdx-setup
-        	Log.e("ShaderCompiler", "Error compiling shader: " + GLES20.glGetShaderInfoLog(shader));
+        	Log.e("ShaderCompiler", "Error compiling shader " + mShaderName + ":\n" + GLES20.glGetShaderInfoLog(shader));
         	GLES20.glDeleteShader(shader);
         	shader = 0;
         	throw new RuntimeException("Error during compiling shader");

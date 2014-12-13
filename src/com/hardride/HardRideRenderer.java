@@ -70,17 +70,15 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         
         mActors.add(cube);
         
-        cube = new DebugCubeRed(mContext);
-        cube.setZ(5.0f);
-        cube.setX(-15.0f);
-        
-        mActors.add(cube);
-        
-        cube = new DebugCubeBlue(mContext);
-        cube.setZ(5.0f);
-        cube.setX(15.0f);
-        
-        mActors.add(cube);
+        for (int i = -5; i < 6; i++) {
+        	for (int j = -5; j < 6; j++) {
+                cube = new WhiteCube(mContext);
+                cube.setX(i * 30.0f);
+                cube.setZ(j * 30.0f);
+                
+                mActors.add(cube);
+        	}
+        }
     }
 
     @Override
