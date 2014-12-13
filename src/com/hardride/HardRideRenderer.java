@@ -7,6 +7,8 @@
 
 package com.hardride;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -30,7 +32,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "HardRideRenderer";
     
-    private DebugCube  mCube;
+    private ArrayList<Actor> mActors;
     private Context mContext;  
     private float 	mStartTime;
     
@@ -61,8 +63,24 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
                 
         Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, -15.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
         
-        mCube = new DebugCubeGreen(mContext);
-        mCube.setZ(5.0f);
+        mActors = new ArrayList<Actor>();
+        
+        Actor cube = new DebugCubeGreen(mContext);
+        cube.setZ(5.0f);
+        
+        mActors.add(cube);
+        
+        cube = new DebugCubeRed(mContext);
+        cube.setZ(5.0f);
+        cube.setX(-15.0f);
+        
+        mActors.add(cube);
+        
+        cube = new DebugCubeBlue(mContext);
+        cube.setZ(5.0f);
+        cube.setX(15.0f);
+        
+        mActors.add(cube);
     }
 
     @Override
@@ -72,11 +90,11 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         
         float currTime = SystemClock.uptimeMillis();
         float programDuration = currTime - mStartTime;
-        mCube.setYaw(0.013f * programDuration);
-        mCube.setPitch(0.11f * programDuration);
+        mActors.get(0).setYaw(0.013f * programDuration);
+        mActors.get(0).setPitch(0.11f * programDuration);
         
-        // Draw square
-        mCube.draw(mViewMatrix, mProjectionMatrix);
+        for (Actor actor : mActors)
+        	actor.draw(mViewMatrix, mProjectionMatrix);
         
         if (currTime > mLastFPSUpdateTime + 1000.0f) {
         	mLastFPSUpdateTime = currTime;
@@ -120,19 +138,19 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         }
     }
 
-    public float getObjectXPos() {
-        return mCube.getX();
+	public float getObjectXPos() {
+        return mActors.get(0).getX();
     }
 
     public void setObjectXPos(float newPos) {
-    	mCube.setX(newPos);
+    	mActors.get(0).setX(newPos);
     }
 
     public float getObjectYPos() {
-        return mCube.getY();
+        return mActors.get(0).getY();
     }
 
     public void setObjectYPos(float newPos) {
-    	mCube.setY(newPos);
+    	mActors.get(0).setY(newPos);
     }
 }
