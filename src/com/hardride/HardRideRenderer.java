@@ -38,6 +38,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     
     private float mLastFPSUpdateTime = 0.0f;
     private int mFPS = 0;
+    private float mLastSecondDrawTime = 0.0f;
     
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
@@ -94,10 +95,14 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         for (Actor actor : mActors)
         	actor.draw(mViewMatrix, mProjectionMatrix);
         
+        mLastSecondDrawTime += SystemClock.uptimeMillis() - currTime;
+       
         if (currTime > mLastFPSUpdateTime + 1000.0f) {
         	mLastFPSUpdateTime = currTime;
-        	Log.i(TAG, "FPS: " + mFPS);
+        	float avgDrawTime = mLastSecondDrawTime / mFPS;
+        	Log.i(TAG, "FPS: " + mFPS + "    avg Draw: " + avgDrawTime + "ms");
         	mFPS = 0;
+        	mLastSecondDrawTime = 0.0f;
         }
         mFPS++;
     }
