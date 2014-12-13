@@ -76,13 +76,6 @@ public class Actor {
         indexBuffer = dlb.asShortBuffer();
         indexBuffer.put(mIndices);
         indexBuffer.position(0);
-        
-        initUniforms();
-    }
-
-    protected void initUniforms() {
-        mShader.use();
-        mShader.unfiormSetVec4("u_Color", new float[]{1.0f, 0.0f, 0.0f, 1.0f});  	
     }
     
     public void draw(float[] ViewMatrix, float[] mProjectionMatrix) {

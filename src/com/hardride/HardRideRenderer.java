@@ -61,7 +61,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
                 
         Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, -15.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
         
-        mCube = new DebugCube(new ShaderSet(mContext, "basic0"), mContext);
+        mCube = new DebugCubeGreen(mContext);
         mCube.setZ(5.0f);
     }
 
