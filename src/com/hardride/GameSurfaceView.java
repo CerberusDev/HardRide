@@ -10,6 +10,7 @@ package com.hardride;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.view.MotionEvent;
 
 /**
@@ -37,9 +38,6 @@ public class GameSurfaceView extends GLSurfaceView {
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
-    private float mPreviousX;
-    private float mPreviousY;
-
     @SuppressLint("ClickableViewAccessibility") @Override
     public boolean onTouchEvent(MotionEvent e) {
         // MotionEvent reports input details from the touch screen
@@ -50,18 +48,16 @@ public class GameSurfaceView extends GLSurfaceView {
         float y = e.getY();
 
         switch (e.getAction()) {
-            case MotionEvent.ACTION_MOVE:
-
-                float dx = x - mPreviousX;
-                float dy = y - mPreviousY;
-
-                mRenderer.setObjectXPos(mRenderer.getObjectXPos() - dx * 0.05f);
-                mRenderer.setObjectYPos(mRenderer.getObjectYPos() - dy * 0.05f);
-                requestRender();
+            case MotionEvent.ACTION_DOWN:
+            	Log.i("HardRide", "Click  x: " + x + "  y: " + y);
+            	if (x > 427.0f) {
+            		mRenderer.rotateViewMatrix(1.0f);
+            	} else {
+            		mRenderer.rotateViewMatrix(-1.0f);
+            	}
+            	break;
         }
 
-        mPreviousX = x;
-        mPreviousY = y;
         return true;
     }
 

@@ -82,13 +82,11 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         
         mActors = new ArrayList<Actor>();
 
-        for (int i = -5; i < 6; i++) {
-        	for (int j = -5; j < 6; j++) {
-        //for (int i = -1; i < 2; i++) {
-        //	for (int j = -1; j < 2; j++) {
+        for (int i = -4; i < 5; i++) {
+        	for (int j = -4; j < 5; j++) {
                 Actor cube = new CubeActor(mContext);
                 cube.setX(i * 30.0f);
-                cube.setZ(j * 30.0f);
+                cube.setZ(j * 30.0f + 10.0f);
                 
                 mActors.add(cube);
         	}
@@ -168,6 +166,10 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         }
     }
 
+    public void rotateViewMatrix(float angle) {
+    	Matrix.rotateM(mViewMatrix, 0, angle, 0.0f, 1.0f, 0.0f);
+    }
+    
 	public float getObjectXPos() {
         return mGreenCube.getX();
     }
