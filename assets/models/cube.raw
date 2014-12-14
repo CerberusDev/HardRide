@@ -5,7 +5,7 @@
 // 2 - Floats per vertex/normal vector
 // 3 - Length of the index buffer
 
-8 3 36
+8 36
 
 v -5.0 5.0 -5.0
 v -5.0 -5.0 -5.0
