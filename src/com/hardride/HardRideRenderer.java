@@ -44,6 +44,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private Actor mGreenCube;
     
     private Context mContext;  
+    private HardRideLogic mLogic;
     private float 	mStartTime;
     
     private float mLastFPSUpdateTime = 0.0f;
@@ -56,10 +57,11 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private PhongShaderSet mPhongShader;
     private UnlitShaderSet mUnlitShader;
     
-    public HardRideRenderer(Context context) {
+    public HardRideRenderer(Context context, HardRideLogic logic) {
     	super();
     	
     	mContext = context;
+    	mLogic = logic;
     	mStartTime = SystemClock.uptimeMillis();
     }
     
@@ -98,6 +100,8 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 unused) {	
+    	mLogic.update();
+    	
         // Draw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         

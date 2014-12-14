@@ -21,8 +21,8 @@ import android.view.MotionEvent;
 public class GameSurfaceView extends GLSurfaceView {
 
     private final HardRideRenderer mRenderer;
+    private final HardRideLogic mLogic;
 
-   
     public GameSurfaceView(Context context) {
         super(context);
 
@@ -30,10 +30,14 @@ public class GameSurfaceView extends GLSurfaceView {
         setEGLContextClientVersion(2);
         setEGLConfigChooser(true);
          
+        mLogic = new HardRideLogic();
+        
         // Set the Renderer for drawing on the GLSurfaceView
-        mRenderer = new HardRideRenderer(context);
+        mRenderer = new HardRideRenderer(context, mLogic);
         setRenderer(mRenderer);
-
+        
+        mLogic.setRenderer(mRenderer);
+        
         // Render the view only when there is a change in the drawing data
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
@@ -45,15 +49,20 @@ public class GameSurfaceView extends GLSurfaceView {
         // interested in events where the touch position changed.
 
         float x = e.getX();
-        float y = e.getY();
 
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
-            	Log.i("HardRide", "Click  x: " + x + "  y: " + y);
             	if (x > 427.0f) {
-            		mRenderer.rotateViewMatrix(1.0f);
+            		mLogic.setInput(true, 0);
             	} else {
-            		mRenderer.rotateViewMatrix(-1.0f);
+            		mLogic.setInput(true, 1);
+            	}
+            	break;
+            case MotionEvent.ACTION_UP:
+            	if (x > 427.0f) {
+            		mLogic.setInput(false, 0);
+            	} else {
+            		mLogic.setInput(false, 1);
             	}
             	break;
         }
