@@ -22,3 +22,7 @@ W³¹czanie i wy³¹czanie atrybutów tylko dwa razy w klatce, bo tylko dwa shadery: 
 U¿ywane by³y vertex_array, zamiast VBO - oznacza to, ¿e dane obiektu by³y przechowywane w pamiêci CPU i przesy³ane na GPU w ka¿dej klatce. Po wrzuceniu danych wierzcho³ków (pozycje i normalki jako osobne bufory) na pamiêæ GPU mamy 43ms i 24 FPS.
 
 Tak samo w ka¿dej klatce przesy³ane by³y indeksy do rysowania. Po wrzuceniu ich w IBO i tylko bindowaniu mamy 29ms i 34 FPS
+
+Odrobinê pomaga wrzucenie pozycji i normalek wierzcho³ków nie do dwóch osobnych, a jednego bufora: 28ms i 35-36 FPS
+
+Jeszcze jedna mikrooptymalizacja: Nie wo³amy glBindBuffer z nullowym wskaŸnikiem po ka¿dym poleceniu rysowania (to by³o zabezpieczenie, ¿eby przez przypadek gdzieœ indziej nie u¿yæ tego bufora) - teraz mamy 25ms i 39-40 FPS
