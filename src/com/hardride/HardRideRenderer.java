@@ -33,6 +33,8 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private static final String TAG = "HardRideRenderer";
     
     private ArrayList<Actor> mActors;
+    private Actor mGreenCube;
+    
     private Context mContext;  
     private float 	mStartTime;
     
@@ -43,6 +45,9 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
        
+    private PhongShaderSet mPhongShader;
+    private UnlitShaderSet mUnlitShader;
+    
     public HardRideRenderer(Context context) {
     	super();
     	
@@ -63,23 +68,29 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glCullFace(GLES20.GL_BACK);
                 
         Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, -15.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
+           
+        mGreenCube = new DebugCubeGreen(mContext);
+        mGreenCube.setZ(5.0f);
         
         mActors = new ArrayList<Actor>();
-        
-        Actor cube = new DebugCubeGreen(mContext);
-        cube.setZ(5.0f);
-        
-        mActors.add(cube);
-        
+
         for (int i = -5; i < 6; i++) {
         	for (int j = -5; j < 6; j++) {
-                cube = new WhiteCube(mContext);
+                Actor cube = new WhiteCube(mContext);
                 cube.setX(i * 30.0f);
                 cube.setZ(j * 30.0f);
                 
                 mActors.add(cube);
         	}
         }
+        
+        mPhongShader = new PhongShaderSet(mContext);
+        mPhongShader.use();
+        mPhongShader.unfiormSetVec4(mPhongShader.U_COLOR, new float[]{0.0f, 1.0f, 0.0f, 1.0f});
+        
+        mUnlitShader = new UnlitShaderSet(mContext);
+        mUnlitShader.use();
+        mUnlitShader.unfiormSetVec4(mPhongShader.U_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
     }
 
     @Override
@@ -89,11 +100,27 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         
         float currTime = SystemClock.uptimeMillis();
         float programDuration = currTime - mStartTime;
-        mActors.get(0).setYaw(0.013f * programDuration);
-        mActors.get(0).setPitch(0.11f * programDuration);
+        mGreenCube.setYaw(0.013f * programDuration);
+        mGreenCube.setPitch(0.11f * programDuration);
+        
+        mPhongShader.use();
+        mPhongShader.attribEnable(mPhongShader.A_POSITION);
+        mPhongShader.attribEnable(mPhongShader.A_NORMAL);
+        
+        mGreenCube.draw(mViewMatrix, mProjectionMatrix, mPhongShader);
+        
+        mPhongShader.attribDisable(mPhongShader.A_POSITION);
+        mPhongShader.attribDisable(mPhongShader.A_NORMAL);
+        
+        mUnlitShader.use();
+        mUnlitShader.attribEnable(mUnlitShader.A_POSITION);
+        mUnlitShader.attribEnable(mUnlitShader.A_NORMAL);
         
         for (Actor actor : mActors)
-        	actor.draw(mViewMatrix, mProjectionMatrix);
+        	actor.draw(mViewMatrix, mProjectionMatrix, mUnlitShader);
+        
+        mUnlitShader.attribDisable(mUnlitShader.A_POSITION);
+        mUnlitShader.attribDisable(mUnlitShader.A_NORMAL);
         
         mLastSecondDrawTime += SystemClock.uptimeMillis() - currTime;
        
@@ -142,18 +169,18 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     }
 
 	public float getObjectXPos() {
-        return mActors.get(0).getX();
+        return mGreenCube.getX();
     }
 
     public void setObjectXPos(float newPos) {
-    	mActors.get(0).setX(newPos);
+    	mGreenCube.setX(newPos);
     }
 
     public float getObjectYPos() {
-        return mActors.get(0).getY();
+        return mGreenCube.getY();
     }
 
     public void setObjectYPos(float newPos) {
-    	mActors.get(0).setY(newPos);
+    	mGreenCube.setY(newPos);
     }
 }

@@ -8,3 +8,13 @@ Pierwsze problemy z wydajnoœci¹: narysowanie ok 120 kostek (cube, 6 vert, 12 tri
 Wyrzucaj¹c wyznaczanie macierzy Model-Widok i Model-Widok-Projekcja co klatkê zyskujemy ok. 3ms, wiêc w zasadzie du¿o, ale ma³o w porównaniu do pozosta³ych 80ciu.
 
 Po przerobieniu uzyskiwania atrybutów uniformów i atrybutów (zapamiêtane, zamiast wywo³ywania glGetXxxLocation() za ka¿dym razem) jest skok do 15-16 FPSów, draw zajmuje ok. 63ms.
+
+Po przemyœleniu: Dla ka¿dej kostki jest tworzony osobny shader, wiêc w jednej klatce jest bindowanych 120 programów cieniuj¹cych, co mo¿e mieæ taki niszczycielski wp³yw na wydajnoœæ.
+
+Mno¿enie macierzy oraz ustawianie uniformów w ka¿dej klatce: 62ms
+Samo ustawianie uniformów w ka¿dej klatce: 60ms
+Nie robienie ¿adnej z tych rzeczy w ¿adnej klatce: 50ms
+
+Zmiana, by nie robiæ useProgram 120 razy w klatce - znikomy przyrost, 60ms (zamiast 62ms)
+
+W³¹czanie i wy³¹czanie atrybutów tylko dwa razy w klatce, bo tylko dwa shadery: draw trwa 51ms, wiêc sza³u nie ma, ale jest wyraŸnie lepiej, 20 FPS osi¹gniête.

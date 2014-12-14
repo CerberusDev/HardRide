@@ -52,9 +52,11 @@ public class ShaderSet {
 		GLES20.glUseProgram(mID);
 	}
 	
-	public void attribEnableAndSetDataFloat(int attribID, int floatsPerVertex, FloatBuffer data) {      
+	public void attribEnable(int attribID) {      
         GLES20.glEnableVertexAttribArray(attribID);
-        
+	}
+	
+	public void attribSetDataFloat(int attribID, int floatsPerVertex, FloatBuffer data) {            
         GLES20.glVertexAttribPointer(attribID, floatsPerVertex, GLES20.GL_FLOAT, false, 0, data);
         HardRideRenderer.checkGlError("glVertexAttribPointer");
 	}

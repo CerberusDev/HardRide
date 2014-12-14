@@ -11,8 +11,8 @@ import android.content.Context;
 
 public class DebugCube extends Actor {
 	
-	public DebugCube(BaseObjectShaderSet shaderProgram, Context context, float[] color) {
-		super(shaderProgram, "cube.raw", context, color);
+	public DebugCube(Context context, float[] color) {
+		super("cube.raw", context, color);
 	}
 
 }

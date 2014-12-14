@@ -25,8 +25,6 @@ import android.opengl.Matrix;
 
 public class Actor {
 	
-	protected BaseObjectShaderSet mShader;
-	
 	protected final FloatBuffer vertexBuffer;
 	protected final FloatBuffer normalBuffer;
 	protected final ShortBuffer indexBuffer;
@@ -52,13 +50,9 @@ public class Actor {
 	
 	protected float[] mColor;
 	
-    public Actor(BaseObjectShaderSet shaderProgram, String modelName, Context context, float[] color) {
-    	mShader = shaderProgram;
+    public Actor(String modelName, Context context, float[] color) {
     	mColor = color;
     	loadModel(modelName, context);
-    	
-		mShader.use();
-		mShader.unfiormSetVec4(mShader.U_COLOR, mColor);  	
     	
     	updateRotationMatrix();
     	updateTranslationMatrix();
@@ -85,23 +79,18 @@ public class Actor {
         indexBuffer.position(0);
     }
     
-    public void draw(float[] ViewMatrix, float[] mProjectionMatrix) {      
+    public void draw(float[] ViewMatrix, float[] mProjectionMatrix, BaseObjectShaderSet shader) {      
         Matrix.multiplyMM(mMVMatrix, 0, ViewMatrix, 0, mModelMatrix, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0);
+                
+        shader.unfiormSetMat4(shader.U_MVMATRIX, mMVMatrix);
+        shader.unfiormSetMat4(shader.U_MVPMATRIX, mMVPMatrix);
         
-        mShader.use();
-        
-        mShader.unfiormSetMat4(mShader.U_MVMATRIX, mMVMatrix);
-        mShader.unfiormSetMat4(mShader.U_MVPMATRIX, mMVPMatrix);
-        
-        mShader.attribEnableAndSetDataFloat(mShader.A_POSITION, mFLOATS_PER_VERTEX, vertexBuffer);
-        mShader.attribEnableAndSetDataFloat(mShader.A_NORMAL, mFLOATS_PER_VERTEX, normalBuffer);
+        shader.attribSetDataFloat(shader.A_POSITION, mFLOATS_PER_VERTEX, vertexBuffer);
+        shader.attribSetDataFloat(shader.A_NORMAL, mFLOATS_PER_VERTEX, normalBuffer);
         
         // Draw the square
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, mIndices.length, GLES20.GL_UNSIGNED_SHORT, indexBuffer);
-
-        mShader.attribDisable(mShader.A_POSITION);
-        mShader.attribDisable(mShader.A_NORMAL);
     }
 
 	protected void loadModel(String modelName, Context context) {
