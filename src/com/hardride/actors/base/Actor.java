@@ -5,7 +5,10 @@
  *
  */
 
-package com.hardride;
+package com.hardride.actors.base;
+
+import com.hardride.models.base.Model;
+import com.hardride.shaders.base.BaseObjectShaderSet;
 
 import android.content.Context;
 import android.opengl.Matrix;

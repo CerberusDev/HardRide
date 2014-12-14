@@ -5,7 +5,8 @@
  *
  */
 
-package com.hardride;
+package com.hardride.shaders.base;
+
 
 import android.content.Context;
 

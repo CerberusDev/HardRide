@@ -5,7 +5,9 @@
  *
  */
 
-package com.hardride;
+package com.hardride.actors.base;
+
+import com.hardride.models.CubeModel;
 
 import android.content.Context;
 

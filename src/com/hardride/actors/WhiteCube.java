@@ -5,7 +5,9 @@
  *
  */
 
-package com.hardride;
+package com.hardride.actors;
+
+import com.hardride.actors.base.DebugCube;
 
 import android.content.Context;
 

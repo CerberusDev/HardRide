@@ -5,7 +5,7 @@
  *
  */
 
-package com.hardride;
+package com.hardride.models.base;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -18,6 +18,9 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.hardride.actors.base.Actor;
+import com.hardride.shaders.base.BaseObjectShaderSet;
 
 import android.content.Context;
 import android.opengl.GLES20;

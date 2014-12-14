@@ -5,10 +5,13 @@
  *
  */
 
-package com.hardride;
+package com.hardride.shaders.base;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import com.hardride.HardRideRenderer;
+
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.opengl.GLES20;

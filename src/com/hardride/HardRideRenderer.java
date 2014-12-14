@@ -12,6 +12,13 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import com.hardride.actors.DebugCubeGreen;
+import com.hardride.actors.WhiteCube;
+import com.hardride.actors.base.Actor;
+import com.hardride.shaders.PhongShaderSet;
+import com.hardride.shaders.UnlitShaderSet;
+
+
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;

@@ -5,7 +5,9 @@
  *
  */
 
-package com.hardride;
+package com.hardride.models;
+
+import com.hardride.models.base.Model;
 
 import android.content.Context;
 
