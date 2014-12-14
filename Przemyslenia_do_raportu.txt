@@ -26,3 +26,5 @@ Tak samo w ka¿dej klatce przesy³ane by³y indeksy do rysowania. Po wrzuceniu ich 
 Odrobinê pomaga wrzucenie pozycji i normalek wierzcho³ków nie do dwóch osobnych, a jednego bufora: 28ms i 35-36 FPS
 
 Jeszcze jedna mikrooptymalizacja: Nie wo³amy glBindBuffer z nullowym wskaŸnikiem po ka¿dym poleceniu rysowania (to by³o zabezpieczenie, ¿eby przez przypadek gdzieœ indziej nie u¿yæ tego bufora) - teraz mamy 25ms i 39-40 FPS
+
+Po dodaniu dodatkowej wartswy abstrakcji (klasa Model) i wprowadzeniu mechanizmu, ¿e takie same modele tworzymy tylko raz (czyli dla 100 kostek mamy 2 bufory, nie 200) FPSy nie zmieni³y siê, drastycznie za to zmniejszy³ sie czas w³¹czania aplikacji.

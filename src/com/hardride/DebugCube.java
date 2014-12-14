@@ -11,8 +11,15 @@ import android.content.Context;
 
 public class DebugCube extends Actor {
 	
+	protected static CubeModel mCube;
+	
 	public DebugCube(Context context, float[] color) {
-		super("cube.raw", context, color);
+		super(context, color);
+		
+		if (mCube == null) {
+			mCube = new CubeModel(context);
+		}
+		
+		setModel(mCube);
 	}
-
 }
