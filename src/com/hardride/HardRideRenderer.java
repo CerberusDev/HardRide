@@ -76,6 +76,8 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
         for (int i = -5; i < 6; i++) {
         	for (int j = -5; j < 6; j++) {
+        //for (int i = -1; i < 2; i++) {
+        //	for (int j = -1; j < 2; j++) {
                 Actor cube = new WhiteCube(mContext);
                 cube.setX(i * 30.0f);
                 cube.setZ(j * 30.0f);
@@ -104,23 +106,23 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         mGreenCube.setPitch(0.11f * programDuration);
         
         mPhongShader.use();
-        mPhongShader.attribEnable(mPhongShader.A_POSITION);
-        mPhongShader.attribEnable(mPhongShader.A_NORMAL);
+        GLES20.glEnableVertexAttribArray(mPhongShader.A_POSITION);
+        GLES20.glEnableVertexAttribArray(mPhongShader.A_NORMAL);
         
         mGreenCube.draw(mViewMatrix, mProjectionMatrix, mPhongShader);
         
-        mPhongShader.attribDisable(mPhongShader.A_POSITION);
-        mPhongShader.attribDisable(mPhongShader.A_NORMAL);
+        GLES20.glDisableVertexAttribArray(mPhongShader.A_POSITION);
+        GLES20.glDisableVertexAttribArray(mPhongShader.A_NORMAL);
         
         mUnlitShader.use();
-        mUnlitShader.attribEnable(mUnlitShader.A_POSITION);
-        mUnlitShader.attribEnable(mUnlitShader.A_NORMAL);
+        GLES20.glEnableVertexAttribArray(mUnlitShader.A_POSITION);
+        GLES20.glEnableVertexAttribArray(mUnlitShader.A_NORMAL);
         
         for (Actor actor : mActors)
         	actor.draw(mViewMatrix, mProjectionMatrix, mUnlitShader);
         
-        mUnlitShader.attribDisable(mUnlitShader.A_POSITION);
-        mUnlitShader.attribDisable(mUnlitShader.A_NORMAL);
+        GLES20.glDisableVertexAttribArray(mUnlitShader.A_POSITION);
+        GLES20.glDisableVertexAttribArray(mUnlitShader.A_NORMAL);
         
         mLastSecondDrawTime += SystemClock.uptimeMillis() - currTime;
        

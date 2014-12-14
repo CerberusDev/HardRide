@@ -9,7 +9,6 @@ package com.hardride;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.FloatBuffer;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.opengl.GLES20;
@@ -19,9 +18,6 @@ public class ShaderSet {
 	
 	public final int mID;
 	protected String mShaderName;
-	
-    //protected HashMap<String, Integer> mAttribs = new HashMap<String, Integer>();
-    //protected HashMap<String, Integer> mUniforms = new HashMap<String, Integer>();
     
 	public ShaderSet(Context context, String shaderName) {
 		mShaderName = shaderName;
@@ -50,19 +46,6 @@ public class ShaderSet {
 
 	public void use() {
 		GLES20.glUseProgram(mID);
-	}
-	
-	public void attribEnable(int attribID) {      
-        GLES20.glEnableVertexAttribArray(attribID);
-	}
-	
-	public void attribSetDataFloat(int attribID, int floatsPerVertex, FloatBuffer data) {            
-        GLES20.glVertexAttribPointer(attribID, floatsPerVertex, GLES20.GL_FLOAT, false, 0, data);
-        HardRideRenderer.checkGlError("glVertexAttribPointer");
-	}
-	
-	public void attribDisable(int attribID) {
-		GLES20.glDisableVertexAttribArray(attribID);
 	}
 	
 	public void unfiormSetVec4(int uniformID, float[] value) {       

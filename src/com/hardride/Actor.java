@@ -25,10 +25,11 @@ import android.opengl.Matrix;
 
 public class Actor {
 	
-	protected final FloatBuffer vertexBuffer;
-	protected final FloatBuffer normalBuffer;
-	protected final ShortBuffer indexBuffer;
+	public static final int BYTES_PER_FLOAT = 4;
+	public static final int BYTES_PER_SHORT = 2;
     
+	final int mBuffers[] = new int[3];
+	
 	protected float mYaw;
 	protected float mPitch;
 	protected float mRoll;
@@ -47,6 +48,7 @@ public class Actor {
 	protected float mVertices[];
 	protected float mNormals[];
 	protected short mIndices[];
+	protected int mIndicesAmount;
 	
 	protected float[] mColor;
 	
@@ -58,25 +60,42 @@ public class Actor {
     	updateTranslationMatrix();
     	
         // initialize vertex byte buffer for shape coordinates
-        ByteBuffer bb = ByteBuffer.allocateDirect(mVertices.length * 4);	// 4 bytes for float
+        ByteBuffer bb = ByteBuffer.allocateDirect(mVertices.length * BYTES_PER_FLOAT);
         bb.order(ByteOrder.nativeOrder());
-        vertexBuffer = bb.asFloatBuffer();
+        FloatBuffer vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(mVertices);
         vertexBuffer.position(0);
         
         // initialize vertex byte buffer for shape normals
-        ByteBuffer nbb = ByteBuffer.allocateDirect(mNormals.length * 4);	// 4 bytes for float
+        ByteBuffer nbb = ByteBuffer.allocateDirect(mNormals.length * BYTES_PER_FLOAT);
         nbb.order(ByteOrder.nativeOrder());
-        normalBuffer = nbb.asFloatBuffer();
+        FloatBuffer normalBuffer = nbb.asFloatBuffer();
         normalBuffer.put(mNormals);
         normalBuffer.position(0);
         
         // initialize byte buffer for the draw list
-        ByteBuffer dlb = ByteBuffer.allocateDirect(mIndices.length * 2);	// 2 bytes for short
+        ByteBuffer dlb = ByteBuffer.allocateDirect(mIndices.length * BYTES_PER_SHORT);
         dlb.order(ByteOrder.nativeOrder());
-        indexBuffer = dlb.asShortBuffer();
+        ShortBuffer indexBuffer = dlb.asShortBuffer();
         indexBuffer.put(mIndices);
         indexBuffer.position(0);
+        
+        GLES20.glGenBuffers(3, mBuffers, 0);
+        
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mBuffers[0]);
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, vertexBuffer.capacity() * BYTES_PER_FLOAT,
+        		vertexBuffer, GLES20.GL_STATIC_DRAW);
+        
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mBuffers[1]);
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, normalBuffer.capacity() * BYTES_PER_FLOAT,
+        		normalBuffer, GLES20.GL_STATIC_DRAW);
+        
+        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, mBuffers[2]);
+        GLES20.glBufferData(GLES20.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * BYTES_PER_SHORT, 
+        		indexBuffer, GLES20.GL_STATIC_DRAW);
+        
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     
     public void draw(float[] ViewMatrix, float[] mProjectionMatrix, BaseObjectShaderSet shader) {      
@@ -86,11 +105,19 @@ public class Actor {
         shader.unfiormSetMat4(shader.U_MVMATRIX, mMVMatrix);
         shader.unfiormSetMat4(shader.U_MVPMATRIX, mMVPMatrix);
         
-        shader.attribSetDataFloat(shader.A_POSITION, mFLOATS_PER_VERTEX, vertexBuffer);
-        shader.attribSetDataFloat(shader.A_NORMAL, mFLOATS_PER_VERTEX, normalBuffer);
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mBuffers[0]);
+        GLES20.glVertexAttribPointer(shader.A_POSITION, mFLOATS_PER_VERTEX, GLES20.GL_FLOAT, false, 0, 0);
+        
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mBuffers[1]);
+        GLES20.glVertexAttribPointer(shader.A_NORMAL, mFLOATS_PER_VERTEX, GLES20.GL_FLOAT, false, 0, 0);
+        
+        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, mBuffers[2]);
         
         // Draw the square
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, mIndices.length, GLES20.GL_UNSIGNED_SHORT, indexBuffer);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, mIndicesAmount, GLES20.GL_UNSIGNED_SHORT, 0);
+        
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
 	protected void loadModel(String modelName, Context context) {
@@ -151,6 +178,8 @@ public class Actor {
 				}			
 			}
 		}
+		
+		mIndicesAmount = mIndices.length;
 	}
     
     public float getYaw() {

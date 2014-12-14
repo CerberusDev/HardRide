@@ -18,3 +18,7 @@ Nie robienie ¿adnej z tych rzeczy w ¿adnej klatce: 50ms
 Zmiana, by nie robiæ useProgram 120 razy w klatce - znikomy przyrost, 60ms (zamiast 62ms)
 
 W³¹czanie i wy³¹czanie atrybutów tylko dwa razy w klatce, bo tylko dwa shadery: draw trwa 51ms, wiêc sza³u nie ma, ale jest wyraŸnie lepiej, 20 FPS osi¹gniête.
+
+U¿ywane by³y vertex_array, zamiast VBO - oznacza to, ¿e dane obiektu by³y przechowywane w pamiêci CPU i przesy³ane na GPU w ka¿dej klatce. Po wrzuceniu danych wierzcho³ków (pozycje i normalki jako osobne bufory) na pamiêæ GPU mamy 43ms i 24 FPS.
+
+Tak samo w ka¿dej klatce przesy³ane by³y indeksy do rysowania. Po wrzuceniu ich w IBO i tylko bindowaniu mamy 29ms i 34 FPS
