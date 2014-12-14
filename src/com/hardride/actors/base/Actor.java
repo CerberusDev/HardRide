@@ -33,12 +33,8 @@ public class Actor {
 	protected final float[] mModelMatrix = new float[16];
 	protected final float[] mMVMatrix = new float[16];
 	protected final float[] mMVPMatrix = new float[16];
-
-	protected float[] mColor;
 	
-    public Actor(Context context, float[] color) {
-    	mColor = color;
-    	
+    public Actor(Context context) {    	
     	updateRotationMatrix();
     	updateTranslationMatrix();
     }

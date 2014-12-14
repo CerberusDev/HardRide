@@ -5,18 +5,19 @@
  *
  */
 
-package com.hardride.actors.base;
+package com.hardride.actors;
 
+import com.hardride.actors.base.Actor;
 import com.hardride.models.CubeModel;
 
 import android.content.Context;
 
-public class DebugCube extends Actor {
+public class CubeActor extends Actor {
 	
 	protected static CubeModel mCube;
 	
-	public DebugCube(Context context, float[] color) {
-		super(context, color);
+	public CubeActor(Context context) {
+		super(context);
 		
 		if (mCube == null) {
 			mCube = new CubeModel(context);

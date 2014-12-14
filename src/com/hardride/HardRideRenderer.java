@@ -12,12 +12,10 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.hardride.actors.DebugCubeGreen;
-import com.hardride.actors.WhiteCube;
+import com.hardride.actors.CubeActor;
 import com.hardride.actors.base.Actor;
 import com.hardride.shaders.PhongShaderSet;
 import com.hardride.shaders.UnlitShaderSet;
-
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -38,6 +36,9 @@ import android.util.Log;
 public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "HardRideRenderer";
+    
+    private static final float GREEN[] = new float[]{0.0f, 1.0f, 0.0f, 1.0f};
+    private static final float WHITE[] = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
     
     private ArrayList<Actor> mActors;
     private Actor mGreenCube;
@@ -76,7 +77,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
                 
         Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, -15.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
            
-        mGreenCube = new DebugCubeGreen(mContext);
+        mGreenCube = new CubeActor(mContext);
         mGreenCube.setZ(5.0f);
         
         mActors = new ArrayList<Actor>();
@@ -85,7 +86,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         	for (int j = -5; j < 6; j++) {
         //for (int i = -1; i < 2; i++) {
         //	for (int j = -1; j < 2; j++) {
-                Actor cube = new WhiteCube(mContext);
+                Actor cube = new CubeActor(mContext);
                 cube.setX(i * 30.0f);
                 cube.setZ(j * 30.0f);
                 
@@ -94,12 +95,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         }
         
         mPhongShader = new PhongShaderSet(mContext);
-        mPhongShader.use();
-        mPhongShader.unfiormSetVec4(mPhongShader.U_COLOR, new float[]{0.0f, 1.0f, 0.0f, 1.0f});
-        
         mUnlitShader = new UnlitShaderSet(mContext);
-        mUnlitShader.use();
-        mUnlitShader.unfiormSetVec4(mPhongShader.U_COLOR, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
     }
 
     @Override
@@ -116,20 +112,15 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glEnableVertexAttribArray(mPhongShader.A_POSITION);
         GLES20.glEnableVertexAttribArray(mPhongShader.A_NORMAL);
         
+        mPhongShader.unfiormSetVec4(mPhongShader.U_COLOR, GREEN);
         mGreenCube.draw(mViewMatrix, mProjectionMatrix, mPhongShader);
         
-        GLES20.glDisableVertexAttribArray(mPhongShader.A_POSITION);
-        GLES20.glDisableVertexAttribArray(mPhongShader.A_NORMAL);
-        
-        mUnlitShader.use();
-        GLES20.glEnableVertexAttribArray(mUnlitShader.A_POSITION);
-        GLES20.glEnableVertexAttribArray(mUnlitShader.A_NORMAL);
-        
+        mPhongShader.unfiormSetVec4(mPhongShader.U_COLOR, WHITE);
         for (Actor actor : mActors)
         	actor.draw(mViewMatrix, mProjectionMatrix, mUnlitShader);
         
-        GLES20.glDisableVertexAttribArray(mUnlitShader.A_POSITION);
-        GLES20.glDisableVertexAttribArray(mUnlitShader.A_NORMAL);
+        GLES20.glDisableVertexAttribArray(mPhongShader.A_POSITION);
+        GLES20.glDisableVertexAttribArray(mPhongShader.A_NORMAL);
         
         mLastSecondDrawTime += SystemClock.uptimeMillis() - currTime;
        
