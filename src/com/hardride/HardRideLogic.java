@@ -7,32 +7,37 @@
 
 package com.hardride;
 
-import android.util.Log;
-
 public class HardRideLogic {
 
+	@SuppressWarnings("unused")
 	private static final String TAG = "HardRideLogic";
 	
 	private HardRideRenderer mRenderer;
 	
-	private boolean mInput[] = new boolean[2];
+	private int mInput[] = new int[InputType.size];
+	
+	public HardRideLogic() {
+		mInput[InputType.NONE.ordinal()] = 2;
+	}
 	
 	public void setRenderer(HardRideRenderer renderer) {
 		mRenderer = renderer;
 	}
 	
-	public void setInput(boolean bNewInputState, int index) {
-		mInput[index] = bNewInputState;
+	public void incInputState(InputType input) {
+		mInput[input.ordinal()] += 1;
+	}
+	
+	public void decInputState(InputType input) {
+		mInput[input.ordinal()] -= 1;
 	}
 	
 	public void update() {
-		//Log.i(TAG, "Input state: " + mInput[0] + "  " + mInput[1]);
-		
-		if (mInput[0]) {
-			mRenderer.rotateViewMatrix(-1.0f);
-		}
-		if (mInput[1]) {
+		if (mInput[InputType.LEFT.ordinal()] > 0) {
 			mRenderer.rotateViewMatrix(1.0f);
+		}
+		if (mInput[InputType.RIGHT.ordinal()] > 0) {
+			mRenderer.rotateViewMatrix(-1.0f);
 		}
 	}
 }
