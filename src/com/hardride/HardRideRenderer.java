@@ -45,7 +45,6 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     
     private Context mContext;  
     private HardRideLogic mLogic;
-    private float 	mStartTime;
     
     private float mLastFPSUpdateTime = 0.0f;
     private int mFPS = 0;
@@ -62,7 +61,6 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     	
     	mContext = context;
     	mLogic = logic;
-    	mStartTime = SystemClock.uptimeMillis();
     }
     
     @Override
@@ -77,10 +75,15 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glEnable(GLES20.GL_CULL_FACE);
         GLES20.glCullFace(GLES20.GL_BACK);
                 
-        Matrix.setLookAtM(mViewMatrix, 0, 0.0f, 0.0f, -15.0f, 0f, 0f, 1f, 0.0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, 
+        		-15.0f, 0.0f, -5.0f, 	// eye XYZ
+        		0.0f, 0.0f, -5.0f, 		// center XYZ
+        		0.0f, 1.0f, 0.0f);		// up XYZ
            
         mGreenCube = new CubeActor(mContext);
-        mGreenCube.setZ(5.0f);
+        mLogic.setVehicle(mGreenCube);
+        mGreenCube.setZ(-5.0f);
+        mGreenCube.setY(-2.0f);
         
         mActors = new ArrayList<Actor>();
 
@@ -106,9 +109,6 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         
         float currTime = SystemClock.uptimeMillis();
-        float programDuration = currTime - mStartTime;
-        mGreenCube.setYaw(0.013f * programDuration);
-        mGreenCube.setPitch(0.11f * programDuration);
         
         mPhongShader.use();
         GLES20.glEnableVertexAttribArray(mPhongShader.A_POSITION);
@@ -146,7 +146,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1.0f, 100.0f);
+        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1.0f, 300.0f);
 
     }
 
