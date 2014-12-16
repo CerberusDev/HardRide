@@ -47,7 +47,6 @@ public class Actor {
         Matrix.multiplyMM(mMVMatrix, 0, ViewMatrix, 0, mModelMatrix, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0);
                 
-        shader.unfiormSetMat4(shader.U_MVMATRIX, mMVMatrix);
         shader.unfiormSetMat4(shader.U_MVPMATRIX, mMVPMatrix);
         
         mModel.draw(shader);
