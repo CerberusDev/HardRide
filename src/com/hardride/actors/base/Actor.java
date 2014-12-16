@@ -31,7 +31,6 @@ public class Actor {
 	protected final float[] mRotationMatrix = new float[16];
 	protected final float[] mTranslationMatrix = new float[16];
 	protected final float[] mModelMatrix = new float[16];
-	protected final float[] mMVMatrix = new float[16];
 	protected final float[] mMVPMatrix = new float[16];
 	
     public Actor(Context context) {    	
@@ -43,10 +42,9 @@ public class Actor {
     	mModel = model;
     }
     
-    public void draw(float[] ViewMatrix, float[] mProjectionMatrix, BaseObjectShaderSet shader) {      
-        Matrix.multiplyMM(mMVMatrix, 0, ViewMatrix, 0, mModelMatrix, 0);
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0);
-                
+    public void draw(float[] ProjectionViewMatrix, BaseObjectShaderSet shader) {      
+    	Matrix.multiplyMM(mMVPMatrix, 0, ProjectionViewMatrix, 0, mModelMatrix, 0);
+    	
         shader.unfiormSetMat4(shader.U_MVPMATRIX, mMVPMatrix);
         
         mModel.draw(shader);

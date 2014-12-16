@@ -52,7 +52,8 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
-       
+    private final float[] mProjectionViewMatrix = new float[16];   
+    
     private PhongShaderSet mPhongShader;
     private UnlitShaderSet mUnlitShader;
     
@@ -79,7 +80,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         		-15.0f, 0.0f, -5.0f, 	// eye XYZ
         		0.0f, 0.0f, -5.0f, 		// center XYZ
         		0.0f, 1.0f, 0.0f);		// up XYZ
-           
+
         mGreenCube = new CubeActor(mContext);
         mLogic.setVehicle(mGreenCube);
         mGreenCube.setZ(-5.0f);
@@ -115,11 +116,11 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glEnableVertexAttribArray(mPhongShader.A_NORMAL);
         
         mPhongShader.unfiormSetVec4(mPhongShader.U_COLOR, GREEN);
-        mGreenCube.draw(mViewMatrix, mProjectionMatrix, mPhongShader);
+        mGreenCube.draw(mProjectionViewMatrix, mPhongShader);
         
         mPhongShader.unfiormSetVec4(mPhongShader.U_COLOR, WHITE);
         for (Actor actor : mActors)
-        	actor.draw(mViewMatrix, mProjectionMatrix, mUnlitShader);
+        	actor.draw(mProjectionViewMatrix, mUnlitShader);
         
         GLES20.glDisableVertexAttribArray(mPhongShader.A_POSITION);
         GLES20.glDisableVertexAttribArray(mPhongShader.A_NORMAL);
@@ -138,16 +139,12 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
-        // Adjust the viewport based on geometry changes,
-        // such as screen rotation
         GLES20.glViewport(0, 0, width, height);
 
         float ratio = (float) width / height;
 
-        // this projection matrix is applied to object coordinates
-        // in the onDrawFrame() method
         Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1.0f, 300.0f);
-
+        Matrix.multiplyMM(mProjectionViewMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
     }
 
     /**
@@ -172,6 +169,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     public void rotateViewMatrix(float angle) {
     	Matrix.rotateM(mViewMatrix, 0, angle, 0.0f, 1.0f, 0.0f);
+    	Matrix.multiplyMM(mProjectionViewMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
     }
     
 	public float getObjectXPos() {
