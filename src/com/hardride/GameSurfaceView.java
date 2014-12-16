@@ -83,7 +83,6 @@ public class GameSurfaceView extends GLSurfaceView {
     	return true;
     }
 
- // Given an action int, returns a string description
     public static String actionToString(int action) {
         switch (action) {
                     
