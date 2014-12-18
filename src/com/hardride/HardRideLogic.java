@@ -7,7 +7,7 @@
 
 package com.hardride;
 
-import com.hardride.actors.base.Actor;
+import com.hardride.actors.VehicleActor;
 
 public class HardRideLogic {
 
@@ -18,7 +18,7 @@ public class HardRideLogic {
 	
 	private int mInput[] = new int[InputType.size];
 	
-	private Actor mVehicle;
+	private VehicleActor mVehicle;
 	private float mMoveSpeed[] = new float[]{0.0f, 1.0f}; 
 	private final float mBaseSpeed = 5.0f;
 	private float mAngle = 0.0f;
@@ -53,7 +53,7 @@ public class HardRideLogic {
 		mRenderer = renderer;
 	}
 	
-	public void setVehicle(Actor vehicle) {
+	public void setVehicle(VehicleActor vehicle) {
 		mVehicle = vehicle;
 	}
 	
