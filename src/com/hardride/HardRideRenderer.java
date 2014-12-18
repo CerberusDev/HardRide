@@ -166,9 +166,12 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
             throw new RuntimeException(glOperation + ": glError " + error);
         }
     }
-
-    public void rotateViewMatrix(float angle) {
-    	Matrix.rotateM(mViewMatrix, 0, angle, 0.0f, 1.0f, 0.0f);
+    
+    public void updateViewMatrix(float x, float z) {
+        Matrix.setLookAtM(mViewMatrix, 0, 
+        		x - 20.0f, 0.0f, z, 	// eye XYZ
+        		x, 0.0f, z, 			// center XYZ
+        		0.0f, 1.0f, 0.0f);		// up XYZ
     	Matrix.multiplyMM(mProjectionViewMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
     }
     

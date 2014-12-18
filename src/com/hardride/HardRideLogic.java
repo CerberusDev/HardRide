@@ -19,25 +19,31 @@ public class HardRideLogic {
 	private int mInput[] = new int[InputType.size];
 	
 	private Actor mVehicle;
-	private float mMoveSpeed[] = new float[2]; 
-	
+	private float mMoveSpeed[] = new float[]{1.0f, 0.0f}; 
+	private final float mBaseSpeed = 2.0f;
+	private float mAngle = 0.0f;
 	
 	public HardRideLogic() {
 		mInput[InputType.NONE.ordinal()] = 2;
-		
-		mMoveSpeed[0] = 0.06f;
-		mMoveSpeed[1] = 0.0f;
 	}
 	
 	public void update() {
-		mVehicle.setX(mVehicle.getX() + mMoveSpeed[0]);
-		mVehicle.setZ(mVehicle.getZ() + mMoveSpeed[1]);
+		float dT = 0.1f;
+		
+		mVehicle.setX(mVehicle.getX() + mMoveSpeed[0] * dT * mBaseSpeed);
+		mVehicle.setZ(mVehicle.getZ() + mMoveSpeed[1] * dT * mBaseSpeed);
+			
+		mRenderer.updateViewMatrix(mVehicle.getX(), mVehicle.getZ());
 		
 		if (mInput[InputType.LEFT.ordinal()] > 0) {
-			mRenderer.rotateViewMatrix(1.0f);
+			mAngle -= 0.05f;
+			mMoveSpeed[0] = (float) Math.cos(mAngle);
+			mMoveSpeed[1] = (float) Math.sin(mAngle);
 		}
 		if (mInput[InputType.RIGHT.ordinal()] > 0) {
-			mRenderer.rotateViewMatrix(-1.0f);
+			mAngle += 0.05f;
+			mMoveSpeed[0] = (float) Math.cos(mAngle);
+			mMoveSpeed[1] = (float) Math.sin(mAngle);
 		}
 	}
 	
