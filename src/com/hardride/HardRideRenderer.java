@@ -161,17 +161,18 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     */
     public static void checkGlError(String glOperation) {
         int error;
+        
         while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
             Log.e(TAG, glOperation + ": glError " + error);
             throw new RuntimeException(glOperation + ": glError " + error);
         }
     }
     
-    public void updateViewMatrix(float x, float z) {
+    public void updateViewMatrix(float x, float z, float a, float b) {
         Matrix.setLookAtM(mViewMatrix, 0, 
-        		x - 20.0f, 0.0f, z, 	// eye XYZ
-        		x, 0.0f, z, 			// center XYZ
-        		0.0f, 1.0f, 0.0f);		// up XYZ
+        		x - 20.0f * a, 10.0f, z - 20.0f * b, 	// eye XYZ
+        		x, 5.0f, z, 							// center XYZ
+        		0.0f, 1.0f, 0.0f);						// up XYZ
     	Matrix.multiplyMM(mProjectionViewMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
     }
     
