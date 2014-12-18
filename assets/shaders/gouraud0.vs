@@ -14,7 +14,7 @@ void main()
 	vec3 FixedNormal = normalize(vec3(u_ModelMatrix * vec4(a_Normal, 0.0)));
 	vec3 LightVector = normalize(vec3(-1.0, 0.3, 0.5));
 	
-	float AmbientWeight = 0.2;
+	float AmbientWeight = 0.25;
 	float AmbientFactor = 1.0;
 	vec4 AmbientLight = u_Color * AmbientFactor * AmbientWeight;
 	

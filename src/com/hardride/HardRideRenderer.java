@@ -127,13 +127,20 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         
         mPhongShader.unfiormSetVec4(mPhongShader.U_COLOR, WHITE);
         for (Actor actor : mActors)
-        	actor.draw(mProjectionViewMatrix, mUnlitShader);
-        
-        mPhongShader.unfiormSetVec4(mPhongShader.U_COLOR, GRAY);
-        mGround.draw(mProjectionViewMatrix, mPhongShader);
+        	actor.draw(mProjectionViewMatrix, mPhongShader);
         
         GLES20.glDisableVertexAttribArray(mPhongShader.A_POSITION);
         GLES20.glDisableVertexAttribArray(mPhongShader.A_NORMAL);
+        
+        mUnlitShader.use();
+        GLES20.glEnableVertexAttribArray(mUnlitShader.A_POSITION);
+        GLES20.glEnableVertexAttribArray(mUnlitShader.A_NORMAL);
+        
+        mUnlitShader.unfiormSetVec4(mUnlitShader.U_COLOR, GRAY);
+        mGround.draw(mProjectionViewMatrix, mUnlitShader);
+        
+        GLES20.glDisableVertexAttribArray(mUnlitShader.A_POSITION);
+        GLES20.glDisableVertexAttribArray(mUnlitShader.A_NORMAL);
         
         mLastSecondDrawTime += SystemClock.uptimeMillis() - currTime;
        
