@@ -1,9 +1,8 @@
 // Custom model data format
 // Lines with "//" at the beginning are treated as comments
-// First line is a header with 3 numbers, which means:
+// First line is a header with 2 numbers, which means:
 // 1 - Amount of vertices/normal vectors
-// 2 - Floats per vertex/normal vector
-// 3 - Length of the index buffer
+// 2 - Length of the index buffer
 
 8 36
 
