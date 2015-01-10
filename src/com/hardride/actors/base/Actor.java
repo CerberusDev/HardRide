@@ -38,6 +38,18 @@ public class Actor {
     	updateTranslationMatrix();
     }
     
+    public Actor(Context context, float x, float y, float z, float yaw, float pitch, float roll) {
+    	mX = x;
+    	mY = y;
+    	mZ = z;
+    	mYaw = yaw;
+    	mPitch = pitch;
+    	mRoll = roll;
+    	
+    	updateRotationMatrix();
+    	updateTranslationMatrix();
+    }
+    
     protected void setModel(Model model) {
     	mModel = model;
     }

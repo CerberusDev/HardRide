@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.hardride.actors.CubeActor;
 import com.hardride.actors.GroundActor;
+import com.hardride.actors.Mesh1Actor;
 import com.hardride.actors.VehicleActor;
 import com.hardride.actors.base.Actor;
 import com.hardride.shaders.PhongShaderSet;
@@ -79,29 +79,12 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
                 
         GLES20.glEnable(GLES20.GL_CULL_FACE);
         GLES20.glCullFace(GLES20.GL_BACK);
-                
-        Matrix.setLookAtM(mViewMatrix, 0, 
-        		-15.0f, 0.0f, -5.0f, 	// eye XYZ
-        		0.0f, 0.0f, -5.0f, 		// center XYZ
-        		0.0f, 1.0f, 0.0f);		// up XYZ
 
-        mVehicle = new VehicleActor(mContext);
+        mVehicle = new VehicleActor(mContext, 15.0f, -2.0f, -100.0f, 0.0f, 0.0f, 0.0f);
         mLogic.setVehicle(mVehicle);
-        mVehicle.setX(15.0f);
-        mVehicle.setZ(-100.0f);
-        mVehicle.setY(-2.0f);
         
         mActors = new ArrayList<Actor>();
-
-        for (int i = -4; i < 5; i++) {
-        	for (int j = -4; j < 5; j++) {
-                Actor cube = new CubeActor(mContext);
-                cube.setX(i * 30.0f);
-                cube.setZ(j * 30.0f + 10.0f);
-                
-                mActors.add(cube);
-        	}
-        }
+        mActors.add(new Mesh1Actor(mContext, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
         
         mGround = new GroundActor(mContext);
         mGround.setY(-5.5f);
