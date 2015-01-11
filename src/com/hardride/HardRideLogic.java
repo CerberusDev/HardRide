@@ -30,6 +30,8 @@ public class HardRideLogic {
 	
 	private float mLastUpdateTime;
 	
+	private boolean mbGameStarted = false;
+	
 	public HardRideLogic() {
 		mInput[InputType.NONE.ordinal()] = 2;
 		mLastUpdateTime = SystemClock.uptimeMillis();
@@ -39,25 +41,26 @@ public class HardRideLogic {
 		float currTime = SystemClock.uptimeMillis();
 		float dT = (currTime - mLastUpdateTime) / 1000.0f;
 		
-		if (mInput[InputType.LEFT.ordinal()] > 0) {
-			mAccelAngle += mAccelChangeFactor * dT;
+		if (mbGameStarted) {
+			if (mInput[InputType.LEFT.ordinal()] > 0) {
+				mAccelAngle += mAccelChangeFactor * dT;
+			}
+			if (mInput[InputType.RIGHT.ordinal()] > 0) {
+				mAccelAngle -= mAccelChangeFactor * dT;
+			}
+			
+			float diff = mAccelAngle - mMoveAngle;
+			mMoveAngle += diff * dT * mMoveInterpSpeed;
+			
+			mVehicle.setPitch((float) Math.toDegrees(mAccelAngle));
+			mMoveDir[0] = (float) Math.sin(mMoveAngle);
+			mMoveDir[1] = (float) Math.cos(mMoveAngle);
+			
+			mVehicle.setX(mVehicle.getX() + mMoveDir[0] * dT * mBaseSpeed);
+			mVehicle.setZ(mVehicle.getZ() + mMoveDir[1] * dT * mBaseSpeed);
+			
+			mRenderer.updateViewMatrix(mVehicle.getX(), mVehicle.getZ(), mMoveDir[0], mMoveDir[1]);
 		}
-		if (mInput[InputType.RIGHT.ordinal()] > 0) {
-			mAccelAngle -= mAccelChangeFactor * dT;
-		}
-		
-		float diff = mAccelAngle - mMoveAngle;
-		mMoveAngle += diff * dT * mMoveInterpSpeed;
-		
-		mVehicle.setPitch((float) Math.toDegrees(mAccelAngle));
-		mMoveDir[0] = (float) Math.sin(mMoveAngle);
-		mMoveDir[1] = (float) Math.cos(mMoveAngle);
-		
-		mVehicle.setX(mVehicle.getX() + mMoveDir[0] * dT * mBaseSpeed);
-		mVehicle.setZ(mVehicle.getZ() + mMoveDir[1] * dT * mBaseSpeed);
-		
-		mRenderer.updateViewMatrix(mVehicle.getX(), mVehicle.getZ(), mMoveDir[0], mMoveDir[1]);
-		
 		mLastUpdateTime = currTime;
 	}
 	
@@ -74,6 +77,9 @@ public class HardRideLogic {
 	}
 	
 	public void decInputState(InputType input) {
+		if (!mbGameStarted && (input == InputType.LEFT || input == InputType.RIGHT))
+			mbGameStarted = true;
+		
 		mInput[input.ordinal()] -= 1;
 	}
 }
