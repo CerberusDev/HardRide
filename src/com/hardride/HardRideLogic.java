@@ -11,6 +11,14 @@ import android.os.SystemClock;
 import com.hardride.actors.VehicleActor;
 import com.hardride.actors.base.Actor;
 
+enum GameState {
+	INITIAL_SCREEN, 
+	GAME, 
+	GAME_OVER;
+	
+	public static final int size = InputType.values().length;
+}
+
 public class HardRideLogic {
 
 	@SuppressWarnings("unused")
@@ -31,8 +39,9 @@ public class HardRideLogic {
 	
 	private float mLastUpdateTime;
 	
-	private boolean mbGameStarted = false;
-	private boolean mbGameFinished = false;
+	private GameState mGameState = GameState.INITIAL_SCREEN;
+	
+	private boolean mbUniqueTap = false;
 	
 	public HardRideLogic() {
 		mInput[InputType.NONE.ordinal()] = 2;
@@ -43,7 +52,7 @@ public class HardRideLogic {
 		float currTime = SystemClock.uptimeMillis();
 		float dT = (currTime - mLastUpdateTime) / 1000.0f;
 		
-		if (mbGameStarted && !mbGameFinished) {
+		if (mGameState == GameState.GAME) {
 			if (mInput[InputType.LEFT.ordinal()] > 0) {
 				mAccelAngle += mAccelChangeFactor * dT;
 			}
@@ -65,7 +74,7 @@ public class HardRideLogic {
 			
 			for (Actor a : mRenderer.getActors()) {
 				if (a.checkIntersect(mVehicle.getX(), mVehicle.getZ()))
-					mbGameFinished = true;
+					mGameState = GameState.GAME_OVER;
 			}
 		}
 		mLastUpdateTime = currTime;
@@ -79,14 +88,41 @@ public class HardRideLogic {
 		mVehicle = vehicle;
 	}
 	
+	public void tapPress() {
+		if (mGameState == GameState.GAME_OVER)
+			mbUniqueTap = true;
+	}
+	
+	public void tapRelease() {
+		switch (mGameState) {
+		case INITIAL_SCREEN:
+			mGameState = GameState.GAME;
+			break;
+		case GAME:
+			break;
+		case GAME_OVER:		
+			if (mbUniqueTap) {
+				mVehicle.setX(-70.0f);
+				mVehicle.setZ(-70.0f);
+				mVehicle.setPitch(0.0f);
+				
+				mAccelAngle = 0.0f;
+				mMoveAngle = 0.0f;
+				
+				mRenderer.updateViewMatrix(mVehicle.getX(), mVehicle.getZ(), 0.0f, 1.0f);
+				
+				mGameState = GameState.INITIAL_SCREEN;
+				mbUniqueTap = false;
+			}
+			break;
+		}
+	}
+	
 	public void incInputState(InputType input) {
 		mInput[input.ordinal()] += 1;
 	}
 	
-	public void decInputState(InputType input) {
-		if (!mbGameStarted && (input == InputType.LEFT || input == InputType.RIGHT))
-			mbGameStarted = true;
-		
+	public void decInputState(InputType input) {	
 		mInput[input.ordinal()] -= 1;
 	}
 }

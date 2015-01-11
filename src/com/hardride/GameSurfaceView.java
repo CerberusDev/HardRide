@@ -53,6 +53,7 @@ public class GameSurfaceView extends GLSurfaceView {
     	int idx = e.getActionIndex();
     	
     	if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
+    		mLogic.tapPress();
     		if (MotionEventCompat.getX(e, idx) > 427.0f) {    			
     			mInput[idx] = InputType.RIGHT;
     			mLogic.decInputState(InputType.NONE);
@@ -63,6 +64,7 @@ public class GameSurfaceView extends GLSurfaceView {
     			mLogic.incInputState(InputType.LEFT);
     		}
     	} else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP) {
+    		mLogic.tapRelease();
     		if (e.getPointerCount() == 1) {
     			if (mInput[0] != InputType.NONE) {
     				idx = 0;
