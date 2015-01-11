@@ -82,6 +82,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
         mVehicle = new VehicleActor(mContext, 15.0f, -2.0f, -100.0f, 0.0f, 0.0f, 0.0f);
         mLogic.setVehicle(mVehicle);
+        updateViewMatrix(mVehicle.getX(), mVehicle.getZ(), 0.0f, 1.0f);
         
         mActors = new ArrayList<Actor>();
         mActors.add(new Mesh1Actor(mContext, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
