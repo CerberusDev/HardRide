@@ -9,6 +9,7 @@ package com.hardride;
 
 import android.os.SystemClock;
 import com.hardride.actors.VehicleActor;
+import com.hardride.actors.base.Actor;
 
 public class HardRideLogic {
 
@@ -31,6 +32,7 @@ public class HardRideLogic {
 	private float mLastUpdateTime;
 	
 	private boolean mbGameStarted = false;
+	private boolean mbGameFinished = false;
 	
 	public HardRideLogic() {
 		mInput[InputType.NONE.ordinal()] = 2;
@@ -41,7 +43,7 @@ public class HardRideLogic {
 		float currTime = SystemClock.uptimeMillis();
 		float dT = (currTime - mLastUpdateTime) / 1000.0f;
 		
-		if (mbGameStarted) {
+		if (mbGameStarted && !mbGameFinished) {
 			if (mInput[InputType.LEFT.ordinal()] > 0) {
 				mAccelAngle += mAccelChangeFactor * dT;
 			}
@@ -60,6 +62,11 @@ public class HardRideLogic {
 			mVehicle.setZ(mVehicle.getZ() + mMoveDir[1] * dT * mBaseSpeed);
 			
 			mRenderer.updateViewMatrix(mVehicle.getX(), mVehicle.getZ(), mMoveDir[0], mMoveDir[1]);
+			
+			for (Actor a : mRenderer.getActors()) {
+				if (a.checkIntersect(mVehicle.getX(), mVehicle.getZ()))
+					mbGameFinished = true;
+			}
 		}
 		mLastUpdateTime = currTime;
 	}

@@ -37,6 +37,9 @@ public class Model {
 	protected short mIndicesRawData[];
 	protected int mIndicesAmount;
 	
+	public float mCollisionRectSizeX;
+	public float mCollisionRectSizeZ;
+	
     public Model(String modelName, Context context) {
     	loadModelDataFromFile(modelName, context);
     	sendModelDataToGPUBuffers();

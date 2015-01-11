@@ -27,11 +27,14 @@ public class Actor {
 	protected float mX;
 	protected float mY;
 	protected float mZ;
-    
+	
 	protected final float[] mRotationMatrix = new float[16];
 	protected final float[] mTranslationMatrix = new float[16];
 	protected final float[] mModelMatrix = new float[16];
 	protected final float[] mMVPMatrix = new float[16];
+	
+	protected float mCollisionRectSizeX;
+	protected float mCollisionRectSizeZ;
 	
     public Actor(Context context) {    	
     	updateRotationMatrix();
@@ -52,6 +55,17 @@ public class Actor {
     
     protected void setModel(Model model) {
     	mModel = model;
+    	
+    	mCollisionRectSizeX = mModel.mCollisionRectSizeX;
+    	mCollisionRectSizeZ = mModel.mCollisionRectSizeZ;
+    }
+    
+    public boolean checkIntersect(float x, float z) {
+    	if (x > mX - mCollisionRectSizeX && x < mX + mCollisionRectSizeX &&
+    		z > mZ - mCollisionRectSizeZ && z < mZ + mCollisionRectSizeZ)
+    		return true;
+    	
+    	return false;
     }
     
     public void draw(float[] ProjectionViewMatrix, BaseObjectShaderSet shader) {      

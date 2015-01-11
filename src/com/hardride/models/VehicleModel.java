@@ -15,5 +15,8 @@ public class VehicleModel extends Model {
 	
     public VehicleModel(Context context) {
     	super("vehicle.raw", context);
+    	
+    	mCollisionRectSizeX = 8.0f;
+    	mCollisionRectSizeZ = 10.0f;
     }
 }

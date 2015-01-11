@@ -228,4 +228,6 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         		0.0f, 1.0f, 0.0f);						// up XYZ
     	Matrix.multiplyMM(mProjectionViewMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
     }
+    
+    public ArrayList<Actor> getActors() {return mActors;}
 }

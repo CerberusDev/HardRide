@@ -15,5 +15,8 @@ public class CubeModel extends Model {
 	
     public CubeModel(Context context) {
     	super("cube.raw", context);
+    	
+    	mCollisionRectSizeX = 10.0f;
+    	mCollisionRectSizeZ = 10.0f;
     }
 }

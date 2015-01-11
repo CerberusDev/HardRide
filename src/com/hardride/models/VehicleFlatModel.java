@@ -15,5 +15,8 @@ public class VehicleFlatModel extends Model {
 	
     public VehicleFlatModel(Context context) {
     	super("vehicle_flat.raw", context);
+    	
+    	mCollisionRectSizeX = 8.0f;
+    	mCollisionRectSizeZ = 10.0f;
     }
 }
