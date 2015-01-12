@@ -72,8 +72,42 @@ public class HardRideLogic {
 			
 			mRenderer.updateViewMatrix(mVehicle.getX(), mVehicle.getZ(), mMoveDir[0], mMoveDir[1]);
 			
+			float radPitch = (float) -Math.toRadians(mVehicle.getPitch());
+			
+			float cos = (float) Math.cos(radPitch);
+			float sin = (float) Math.sin(radPitch);
+			
+			float x = mVehicle.getX() + 4.0f;
+			float z = mVehicle.getZ() + 5.0f;
+	    	float modX1 = (float) (cos * (x - mVehicle.getX()) - sin * (z - mVehicle.getZ()) + mVehicle.getX());
+	    	float modZ1 = (float) (sin * (x - mVehicle.getX()) + cos * (z - mVehicle.getZ()) + mVehicle.getZ());
+			
+	    	x = mVehicle.getX() + 4.0f;
+			z = mVehicle.getZ() - 5.0f;
+	    	float modX2 = (float) (cos * (x - mVehicle.getX()) - sin * (z - mVehicle.getZ()) + mVehicle.getX());
+	    	float modZ2 = (float) (sin * (x - mVehicle.getX()) + cos * (z - mVehicle.getZ()) + mVehicle.getZ());
+	    	
+	    	x = mVehicle.getX() - 4.0f;
+			z = mVehicle.getZ() + 5.0f;
+	    	float modX3 = (float) (cos * (x - mVehicle.getX()) - sin * (z - mVehicle.getZ()) + mVehicle.getX());
+	    	float modZ3 = (float) (sin * (x - mVehicle.getX()) + cos * (z - mVehicle.getZ()) + mVehicle.getZ());
+	    	
+	    	x = mVehicle.getX() - 4.0f;
+			z = mVehicle.getZ() - 5.0f;
+	    	float modX4 = (float) (cos * (x - mVehicle.getX()) - sin * (z - mVehicle.getZ()) + mVehicle.getX());
+	    	float modZ4 = (float) (sin * (x - mVehicle.getX()) + cos * (z - mVehicle.getZ()) + mVehicle.getZ());
+	    	
 			for (Actor a : mRenderer.getActors()) {
-				if (a.checkIntersect(mVehicle.getX(), mVehicle.getZ()))
+				if (a.checkIntersect(modX1, modZ1))
+					mGameState = GameState.GAME_OVER;
+				
+				if (a.checkIntersect(modX2, modZ2))
+					mGameState = GameState.GAME_OVER;
+				
+				if (a.checkIntersect(modX3, modZ3))
+					mGameState = GameState.GAME_OVER;
+				
+				if (a.checkIntersect(modX4, modZ4))
 					mGameState = GameState.GAME_OVER;
 			}
 		}

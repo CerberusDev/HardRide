@@ -93,7 +93,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     private void initLevel() {    	
     	mActors = new ArrayList<Actor>();
-    	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -90.0f, 0.0f, 180.0f, 0.0f));
+    	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -90.0f, 0.0f, 0.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -70.0f, 0.0f, 0.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -50.0f, 0.0f, 0.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -30.0f, 0.0f, 0.0f, 0.0f));
@@ -115,7 +115,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     	mActors.add(new Mesh1Actor(mContext, -55.0f, 0.0f, 20.0f, 0.0f, 90.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, -70.0f, 0.0f, 16.0f, 0.0f, 60.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, -81.0f, 0.0f, 5.0f, 0.0f, 30.0f, 0.0f));
-    	
+    	 
     	mActors.add(new Mesh1Actor(mContext, -81.0f, 0.0f, -105.0f, 0.0f, 330.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, -70.0f, 0.0f, -116.0f, 0.0f, 300.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, -55.0f, 0.0f, -120.0f, 0.0f, 270.0f, 0.0f));
@@ -124,7 +124,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     	
     	
     	mActors.add(new CubeActor(mContext, 100.0f, 0.0f, 100.0f, 0.0f, 0.0f, 0.0f));
-    	
+    	/*
     	mActors.add(new Mesh1Actor(mContext, 130.0f, 0.0f, 100.0f, 0.0f, 180.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, 126.0f, 0.0f, 115.0f, 0.0f, 150.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, 115.0f, 0.0f, 126.0f, 0.0f, 120.0f, 0.0f));
@@ -140,6 +140,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     	mActors.add(new Mesh1Actor(mContext, 100.0f, 0.0f, 70.0f, 0.0f, 270.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, 115.0f, 0.0f, 74.0f, 0.0f, 240.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, 126.0f, 0.0f, 85.0f, 0.0f, 210.0f, 0.0f));
+    	*/
     	
     	mGround = new GroundActor(mContext);
     	mGround.setY(-5.5f);
