@@ -14,6 +14,7 @@ import com.hardride.actors.base.Actor;
 enum GameState {
 	INITIAL_SCREEN, 
 	GAME, 
+	GAME_PAUSED,
 	GAME_OVER;
 	
 	public static final int size = InputType.values().length;
@@ -122,6 +123,16 @@ public class HardRideLogic {
 		mVehicle = vehicle;
 	}
 	
+	public void pauseGame() {
+		if (mGameState == GameState.GAME) 
+			mGameState = GameState.GAME_PAUSED;
+	}
+	
+	public void unpauseGame() {
+		if (mGameState == GameState.GAME_PAUSED) 
+			mGameState = GameState.GAME;	
+	}
+	
 	public void tapPress() {
 		if (mGameState == GameState.GAME_OVER)
 			mbUniqueTap = true;
@@ -148,6 +159,8 @@ public class HardRideLogic {
 				mGameState = GameState.INITIAL_SCREEN;
 				mbUniqueTap = false;
 			}
+			break;
+		default:
 			break;
 		}
 	}

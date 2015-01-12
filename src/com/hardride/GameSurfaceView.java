@@ -46,6 +46,14 @@ public class GameSurfaceView extends GLSurfaceView {
         // Render the view only when there is a change in the drawing data
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
+    
+    public void onPause() {
+    	mLogic.pauseGame();
+    }
+    
+    public void onRelease() {
+    	mLogic.unpauseGame();
+    }
 
     @SuppressLint("ClickableViewAccessibility") @Override
     public boolean onTouchEvent(MotionEvent e) {
