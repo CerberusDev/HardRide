@@ -33,9 +33,9 @@ public class HardRideLogic {
 	private float mMoveAngle = 0.0f;
 	private float mAccelAngle = 0.0f;
 	
-	private final float mBaseSpeed = 25.0f;
-	private float mMoveInterpSpeed = 2.4f;
-	private float mAccelChangeFactor = 3.0f;
+	private final float mBaseSpeed = 30.0f;
+	private float mMoveInterpSpeed = 1.3f;
+	private float mAccelChangeFactor = 2.8f;
 	
 	private float mLastUpdateTime;
 	
