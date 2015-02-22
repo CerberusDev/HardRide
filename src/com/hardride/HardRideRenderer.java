@@ -17,6 +17,8 @@ import com.hardride.actors.GroundActor;
 import com.hardride.actors.Mesh1Actor;
 import com.hardride.actors.VehicleActor;
 import com.hardride.actors.base.Actor;
+import com.hardride.actors.base.ParticleEmitter;
+import com.hardride.shaders.ParticleShaderSet;
 import com.hardride.shaders.PhongShaderSet;
 import com.hardride.shaders.UnlitShaderSet;
 
@@ -41,6 +43,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private static final String TAG = "HardRideRenderer";
     
     private static final float GREEN[] = new float[]{0.0f, 1.0f, 0.0f, 1.0f};
+    private static final float RED[] = new float[]{1.0f, 0.0f, 0.0f, 1.0f};
     private static final float WHITE[] = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
     private static final float GRAY[] = new float[]{0.6f, 0.6f, 0.6f, 1.0f};
     
@@ -61,6 +64,9 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     
     private PhongShaderSet mPhongShader;
     private UnlitShaderSet mUnlitShader;
+    private ParticleShaderSet mParticleShader;
+    
+    private ParticleEmitter mPE;
     
     public HardRideRenderer(Context context, HardRideLogic logic) {
     	super();
@@ -89,10 +95,15 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         
         mPhongShader = new PhongShaderSet(mContext);
         mUnlitShader = new UnlitShaderSet(mContext);
+        mParticleShader = new ParticleShaderSet(mContext);
     }
 
     private void initLevel() {    	
     	mActors = new ArrayList<Actor>();
+    	
+    	//mActors.add(new ParticleEmitter(mContext, -70.0f, -2.0f, -70.0f, 0.0f, 0.0f, 0.0f));
+    	mPE = new ParticleEmitter(mContext, -70.0f, 0.0f, -70.0f, 0.0f, 0.0f, 0.0f);
+    	
     	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -90.0f, 0.0f, 0.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -10.0f, 0.0f, 0.0f, 0.0f));
     	
@@ -197,6 +208,16 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         
         GLES20.glDisableVertexAttribArray(mUnlitShader.A_POSITION);
         GLES20.glDisableVertexAttribArray(mUnlitShader.A_NORMAL);
+        
+        mParticleShader.use();
+        GLES20.glEnableVertexAttribArray(mParticleShader.A_POSITION);
+        GLES20.glEnableVertexAttribArray(mParticleShader.A_NORMAL);
+        
+        mParticleShader.unfiormSetVec4(mParticleShader.U_COLOR, RED);
+        mPE.draw(mProjectionViewMatrix, mParticleShader);
+        
+        GLES20.glDisableVertexAttribArray(mParticleShader.A_POSITION);
+        GLES20.glDisableVertexAttribArray(mParticleShader.A_NORMAL);
         
         mLastSecondDrawTime += SystemClock.uptimeMillis() - currTime;
        

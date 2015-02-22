@@ -8,6 +8,7 @@
 package com.hardride.actors.base;
 
 import com.hardride.models.base.Model;
+import com.hardride.models.base.Renderable;
 import com.hardride.shaders.base.BaseObjectShaderSet;
 
 import android.content.Context;
@@ -15,7 +16,7 @@ import android.opengl.Matrix;
 
 public class Actor {
 	
-	protected Model mModel;
+	protected Renderable mModel;
 	
 	public static final int BYTES_PER_FLOAT = 4;
 	public static final int BYTES_PER_SHORT = 2;
@@ -53,11 +54,14 @@ public class Actor {
     	updateTranslationMatrix();
     }
     
-    protected void setModel(Model model) {
-    	mModel = model;
+    protected void setModel(Renderable msModel) {
+    	mModel = msModel;
     	
-    	mCollisionRectOffsetX = mModel.mCollisionRectSizeX / 2.0f;
-    	mCollisionRectOffsetZ = mModel.mCollisionRectSizeZ / 2.0f;
+    	if (mModel instanceof Model) {    		
+    		mCollisionRectOffsetX = ((Model)mModel).mCollisionRectSizeX / 2.0f;
+    		mCollisionRectOffsetZ = ((Model)mModel).mCollisionRectSizeZ / 2.0f;
+    	}
+    	
     }
     
     public boolean checkIntersect(float x, float z) {
