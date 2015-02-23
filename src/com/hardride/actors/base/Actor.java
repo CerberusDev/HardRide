@@ -79,7 +79,7 @@ public class Actor {
     	shader.unfiormSetMat4(shader.U_MODEL_MATRIX, mModelMatrix);
         shader.unfiormSetMat4(shader.U_MVPMATRIX, mMVPMatrix);
         
-        mModel.draw(shader);
+        ((Model)mModel).draw(shader);
     }
     
     public float getYaw() {

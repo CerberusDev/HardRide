@@ -15,7 +15,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hardride.actors.base.Actor;
+import com.hardride.shaders.base.BaseObjectShaderSet;
+
 import android.content.Context;
+import android.opengl.GLES20;
 
 public class Model extends Renderable {
 	
@@ -27,6 +31,20 @@ public class Model extends Renderable {
     	sendModelDataToGPUBuffers();
     }
 	
+	public void draw(BaseObjectShaderSet shader) {
+        final int stride = (FLOATS_PER_POSITION + FLOATS_PER_NORMAL) * Actor.BYTES_PER_FLOAT;
+        
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO[0]);
+        GLES20.glVertexAttribPointer(shader.A_POSITION, FLOATS_PER_POSITION, GLES20.GL_FLOAT, false, stride, 0);
+        GLES20.glVertexAttribPointer(shader.A_NORMAL, FLOATS_PER_NORMAL, GLES20.GL_FLOAT, false, stride, 
+        		FLOATS_PER_POSITION * Actor.BYTES_PER_FLOAT);
+        
+        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, mIBO[0]);
+        
+        // Draw the model
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, mIndicesAmount, GLES20.GL_UNSIGNED_SHORT, 0);
+    }
+    
 	protected void loadModelDataFromFile(String modelName, Context context) {
 		List<String> strLines = new ArrayList<String>();
 		

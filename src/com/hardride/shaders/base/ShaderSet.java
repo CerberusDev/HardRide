@@ -61,6 +61,11 @@ public class ShaderSet {
         HardRideRenderer.checkGlError("glUniform4fv");
 	}
 	
+	public void unfiormSetFloat(int uniformID, float value) {
+		GLES20.glUniform1f(uniformID, value);
+		HardRideRenderer.checkGlError("glUniform1f");
+	}
+	
 	protected int getAttribID(String name) {
 		int attribHandle = GLES20.glGetAttribLocation(mID, name);
 		verifyAttribHandle(attribHandle, name);

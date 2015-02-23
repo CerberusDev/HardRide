@@ -103,9 +103,9 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     	mActors = new ArrayList<Actor>();
     	
     	//mActors.add(new ParticleEmitter(mContext, -70.0f, -2.0f, -70.0f, 0.0f, 0.0f, 0.0f));
-    	mPE = new ParticleEmitter(mContext, -70.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f);
+    	mPE = new ParticleEmitter(mContext, -70.0f, 0.0f, -50.0f, 0.0f, 0.0f, 0.0f);
     	
-    	mActors.add(new Mesh2Actor(mContext, -70.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f));
+    	mActors.add(new Mesh2Actor(mContext, -70.0f, 0.0f, -50.0f, 0.0f, 0.0f, 0.0f));
     	
     	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -90.0f, 0.0f, 0.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -10.0f, 0.0f, 0.0f, 0.0f));
@@ -214,13 +214,14 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         
         mParticleShader.use();
         GLES20.glEnableVertexAttribArray(mParticleShader.A_POSITION);
-        GLES20.glEnableVertexAttribArray(mParticleShader.A_NORMAL);
+        GLES20.glEnableVertexAttribArray(mParticleShader.A_END_TRANSLATION);
         
         mParticleShader.unfiormSetVec4(mParticleShader.U_COLOR, RED);
+        mParticleShader.unfiormSetFloat(mParticleShader.U_LIFETIME, (float) Math.sin(currTime / 500.0f) / 2.0f + 0.5f);
         mPE.drawParticle(mProjectionMatrix, mViewMatrix, mParticleShader);
         
         GLES20.glDisableVertexAttribArray(mParticleShader.A_POSITION);
-        GLES20.glDisableVertexAttribArray(mParticleShader.A_NORMAL);
+        GLES20.glDisableVertexAttribArray(mParticleShader.A_END_TRANSLATION);
         
         mLastSecondDrawTime += SystemClock.uptimeMillis() - currTime;
        

@@ -15,7 +15,6 @@ import java.nio.ShortBuffer;
 import android.opengl.GLES20;
 
 import com.hardride.actors.base.Actor;
-import com.hardride.shaders.base.BaseObjectShaderSet;
 
 public class Renderable {
 	
@@ -56,18 +55,4 @@ public class Renderable {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);		
 	}
-	
-	public void draw(BaseObjectShaderSet shader) {
-        final int stride = (FLOATS_PER_POSITION + FLOATS_PER_NORMAL) * Actor.BYTES_PER_FLOAT;
-        
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO[0]);
-        GLES20.glVertexAttribPointer(shader.A_POSITION, FLOATS_PER_POSITION, GLES20.GL_FLOAT, false, stride, 0);
-        GLES20.glVertexAttribPointer(shader.A_NORMAL, FLOATS_PER_NORMAL, GLES20.GL_FLOAT, false, stride, 
-        		FLOATS_PER_POSITION * Actor.BYTES_PER_FLOAT);
-        
-        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, mIBO[0]);
-        
-        // Draw the model
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, mIndicesAmount, GLES20.GL_UNSIGNED_SHORT, 0);
-    }
 }
