@@ -217,7 +217,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glEnableVertexAttribArray(mParticleShader.A_END_TRANSLATION);
         
         mParticleShader.unfiormSetVec4(mParticleShader.U_COLOR, RED);
-        mParticleShader.unfiormSetFloat(mParticleShader.U_LIFETIME, (float) Math.sin(currTime / 500.0f) / 2.0f + 0.5f);
+        mParticleShader.unfiormSetFloat(mParticleShader.U_LIFETIME, (currTime % 4000.0f) / 4000.0f);
         mPE.drawParticle(mProjectionMatrix, mViewMatrix, mParticleShader);
         
         GLES20.glDisableVertexAttribArray(mParticleShader.A_POSITION);
