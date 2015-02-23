@@ -15,6 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
 import com.hardride.actors.CubeActor;
 import com.hardride.actors.GroundActor;
 import com.hardride.actors.Mesh1Actor;
+import com.hardride.actors.Mesh2Actor;
 import com.hardride.actors.VehicleActor;
 import com.hardride.actors.base.Actor;
 import com.hardride.actors.base.ParticleEmitter;
@@ -61,7 +62,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
     private final float[] mProjectionViewMatrix = new float[16];   
-    
+
     private PhongShaderSet mPhongShader;
     private UnlitShaderSet mUnlitShader;
     private ParticleShaderSet mParticleShader;
@@ -102,7 +103,9 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     	mActors = new ArrayList<Actor>();
     	
     	//mActors.add(new ParticleEmitter(mContext, -70.0f, -2.0f, -70.0f, 0.0f, 0.0f, 0.0f));
-    	mPE = new ParticleEmitter(mContext, -70.0f, 0.0f, -70.0f, 0.0f, 0.0f, 0.0f);
+    	mPE = new ParticleEmitter(mContext, -70.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f);
+    	
+    	mActors.add(new Mesh2Actor(mContext, -70.0f, 0.0f, 10.0f, 0.0f, 0.0f, 0.0f));
     	
     	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -90.0f, 0.0f, 0.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -10.0f, 0.0f, 0.0f, 0.0f));
@@ -214,7 +217,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glEnableVertexAttribArray(mParticleShader.A_NORMAL);
         
         mParticleShader.unfiormSetVec4(mParticleShader.U_COLOR, RED);
-        mPE.draw(mProjectionViewMatrix, mParticleShader);
+        mPE.drawParticle(mProjectionMatrix, mViewMatrix, mParticleShader);
         
         GLES20.glDisableVertexAttribArray(mParticleShader.A_POSITION);
         GLES20.glDisableVertexAttribArray(mParticleShader.A_NORMAL);
@@ -267,6 +270,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         		x - 20.0f * a, 10.0f, z - 20.0f * b, 	// eye XYZ
         		x, 5.0f, z, 							// center XYZ
         		0.0f, 1.0f, 0.0f);						// up XYZ
+        
     	Matrix.multiplyMM(mProjectionViewMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
     }
     
