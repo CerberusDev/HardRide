@@ -7,6 +7,8 @@
 
 package com.hardride.models.base;
 
+import java.util.Random;
+
 import android.opengl.GLES20;
 
 import com.hardride.actors.base.Actor;
@@ -29,46 +31,39 @@ public class Particle extends Renderable {
     }
 	
 	public Particle() {
-		int verticesAmount = 4;
-		mIndicesAmount = 6;
+		int particlesAmount = 40;
+		int verticesAmount = 4 * particlesAmount;
+		mIndicesAmount = 6 * particlesAmount;
 		
 		mVerticesRawData = new float[(FLOATS_PER_POSITION + FLOATS_PER_NORMAL) * verticesAmount];
 		mIndicesRawData = new short[mIndicesAmount];
 		
-		mVerticesRawData[0] = -2.0f;
-		mVerticesRawData[1] = 2.0f;
-		mVerticesRawData[2] = 0.0f;
-		mVerticesRawData[3] = 10.0f;
-		mVerticesRawData[4] = 0.0f;
-		mVerticesRawData[5] = 0.0f;
-				
-		mVerticesRawData[6] = -2.0f;
-		mVerticesRawData[7] = -2.0f;
-		mVerticesRawData[8] = 0.0f;
-		mVerticesRawData[9] = 10.0f;
-		mVerticesRawData[10] = 0.0f;
-		mVerticesRawData[11] = 0.0f;
+		Random rand = new Random();
 		
-		mVerticesRawData[12] = 2.0f;
-		mVerticesRawData[13] = -2.0f;
-		mVerticesRawData[14] = 0.0f;
-		mVerticesRawData[15] = 10.0f;
-		mVerticesRawData[16] = 0.0f;
-		mVerticesRawData[17] = 0.0f;
+		int idxV = 0;
+		int idxI = 0;
 		
-		mVerticesRawData[18] = 2.0f;
-		mVerticesRawData[19] = 2.0f;
-		mVerticesRawData[20] = 0.0f;
-		mVerticesRawData[21] = 10.0f;
-		mVerticesRawData[22] = 0.0f;
-		mVerticesRawData[23] = 0.0f;
-				
-		mIndicesRawData[0] = 0;
-		mIndicesRawData[1] = 2;
-		mIndicesRawData[2] = 1;
-		mIndicesRawData[3] = 0;
-		mIndicesRawData[4] = 3;
-		mIndicesRawData[5] = 2;
+		for (int p = 0; p < particlesAmount; ++p) {
+			float dirX = rand.nextFloat() * 20.0f - 10.0f;
+			float dirY = rand.nextFloat() * 20.0f - 10.0f;
+			float dirZ = rand.nextFloat() * 20.0f - 10.0f;
+			
+			for (int i = 0; i < 4; ++i) {
+				mVerticesRawData[idxV++] = (i > 1) ? 2.0f : -2.0f;
+				mVerticesRawData[idxV++] = (i == 0 || i == 3) ? 2.0f : -2.0f;
+				mVerticesRawData[idxV++] = 0.0f;
+				mVerticesRawData[idxV++] = dirX;
+				mVerticesRawData[idxV++] = dirY;
+				mVerticesRawData[idxV++] = dirZ;
+			}
+	
+			mIndicesRawData[idxI++] = (short) (0 + p * 4);
+			mIndicesRawData[idxI++] = (short) (2 + p * 4);
+			mIndicesRawData[idxI++] = (short) (1 + p * 4);
+			mIndicesRawData[idxI++] = (short) (0 + p * 4);
+			mIndicesRawData[idxI++] = (short) (3 + p * 4);
+			mIndicesRawData[idxI++] = (short) (2 + p * 4);
+		}
 		
 		sendModelDataToGPUBuffers();
 	}
