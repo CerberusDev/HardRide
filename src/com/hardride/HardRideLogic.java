@@ -100,19 +100,24 @@ public class HardRideLogic {
 	    	
 			for (Actor a : mRenderer.getActors()) {
 				if (a.checkIntersect(modX1, modZ1))
-					mGameState = GameState.GAME_OVER;
+					endGame();
 				
 				if (a.checkIntersect(modX2, modZ2))
-					mGameState = GameState.GAME_OVER;
+					endGame();
 				
 				if (a.checkIntersect(modX3, modZ3))
-					mGameState = GameState.GAME_OVER;
+					endGame();
 				
 				if (a.checkIntersect(modX4, modZ4))
-					mGameState = GameState.GAME_OVER;
+					endGame();
 			}
 		}
 		mLastUpdateTime = currTime;
+	}
+	
+	public void endGame() {
+		mGameState = GameState.GAME_OVER;
+		mRenderer.spawnCollisionParticle(mVehicle.getX(), mVehicle.getY(), mVehicle.getZ(), 4.0f);
 	}
 	
 	public void setRenderer(HardRideRenderer renderer) {

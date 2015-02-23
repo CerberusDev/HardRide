@@ -31,7 +31,7 @@ public class Particle extends Renderable {
     }
 	
 	public Particle() {
-		int particlesAmount = 40;
+		int particlesAmount = 30;
 		int verticesAmount = 4 * particlesAmount;
 		mIndicesAmount = 6 * particlesAmount;
 		
@@ -45,7 +45,7 @@ public class Particle extends Renderable {
 		
 		for (int p = 0; p < particlesAmount; ++p) {
 			float dirX = rand.nextFloat() * 20.0f - 10.0f;
-			float dirY = rand.nextFloat() * 20.0f - 10.0f;
+			float dirY = rand.nextFloat() * 10.0f;
 			float dirZ = rand.nextFloat() * 20.0f - 10.0f;
 			
 			for (int i = 0; i < 4; ++i) {

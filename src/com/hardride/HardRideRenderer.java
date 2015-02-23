@@ -8,14 +8,12 @@
 package com.hardride;
 
 import java.util.ArrayList;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.hardride.actors.CubeActor;
 import com.hardride.actors.GroundActor;
 import com.hardride.actors.Mesh1Actor;
-import com.hardride.actors.Mesh2Actor;
 import com.hardride.actors.VehicleActor;
 import com.hardride.actors.base.Actor;
 import com.hardride.actors.base.ParticleEmitter;
@@ -44,7 +42,7 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     private static final String TAG = "HardRideRenderer";
     
     private static final float GREEN[] = new float[]{0.0f, 1.0f, 0.0f, 1.0f};
-    private static final float RED[] = new float[]{1.0f, 0.0f, 0.0f, 1.0f};
+    private static final float DARK_GREEN[] = new float[]{0.0f, 0.15f, 0.0f, 1.0f};
     private static final float WHITE[] = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
     private static final float GRAY[] = new float[]{0.6f, 0.6f, 0.6f, 1.0f};
     
@@ -101,11 +99,8 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
 
     private void initLevel() {    	
     	mActors = new ArrayList<Actor>();
-    	
-    	//mActors.add(new ParticleEmitter(mContext, -70.0f, -2.0f, -70.0f, 0.0f, 0.0f, 0.0f));
-    	mPE = new ParticleEmitter(mContext, -70.0f, 0.0f, -50.0f, 0.0f, 0.0f, 0.0f);
-    	
-    	mActors.add(new Mesh2Actor(mContext, -70.0f, 0.0f, -50.0f, 0.0f, 0.0f, 0.0f));
+    	  
+    	//mActors.add(new Mesh2Actor(mContext, -70.0f, 0.0f, -50.0f, 0.0f, 0.0f, 0.0f));
     	
     	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -90.0f, 0.0f, 0.0f, 0.0f));
     	mActors.add(new Mesh1Actor(mContext, -25.0f, 0.0f, -10.0f, 0.0f, 0.0f, 0.0f));
@@ -179,6 +174,14 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
     	mGround.setY(-5.5f);
     }
     
+    public void spawnCollisionParticle(float x, float y, float z, float lifeTime) {
+    	mPE = new ParticleEmitter(mContext, this, x, y, z, lifeTime);
+    }
+    
+    public void clearCollisionParticle() {
+    	mPE = null;
+    }
+    
     @Override
     public void onDrawFrame(GL10 unused) {	
     	mLogic.update();
@@ -212,16 +215,17 @@ public class HardRideRenderer implements GLSurfaceView.Renderer {
         GLES20.glDisableVertexAttribArray(mUnlitShader.A_POSITION);
         GLES20.glDisableVertexAttribArray(mUnlitShader.A_NORMAL);
         
-        mParticleShader.use();
-        GLES20.glEnableVertexAttribArray(mParticleShader.A_POSITION);
-        GLES20.glEnableVertexAttribArray(mParticleShader.A_END_TRANSLATION);
-        
-        mParticleShader.unfiormSetVec4(mParticleShader.U_COLOR, RED);
-        mParticleShader.unfiormSetFloat(mParticleShader.U_LIFETIME, (currTime % 4000.0f) / 4000.0f);
-        mPE.drawParticle(mProjectionMatrix, mViewMatrix, mParticleShader);
-        
-        GLES20.glDisableVertexAttribArray(mParticleShader.A_POSITION);
-        GLES20.glDisableVertexAttribArray(mParticleShader.A_END_TRANSLATION);
+        if (mPE != null) {        	
+        	mParticleShader.use();
+        	GLES20.glEnableVertexAttribArray(mParticleShader.A_POSITION);
+        	GLES20.glEnableVertexAttribArray(mParticleShader.A_END_TRANSLATION);
+        	
+        	mParticleShader.unfiormSetVec4(mParticleShader.U_COLOR, DARK_GREEN);
+        	mPE.drawParticle(mProjectionMatrix, mViewMatrix, mParticleShader, currTime);
+        	
+        	GLES20.glDisableVertexAttribArray(mParticleShader.A_POSITION);
+        	GLES20.glDisableVertexAttribArray(mParticleShader.A_END_TRANSLATION);
+        }
         
         mLastSecondDrawTime += SystemClock.uptimeMillis() - currTime;
        
