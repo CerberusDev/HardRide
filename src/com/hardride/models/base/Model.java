@@ -72,7 +72,7 @@ public class Model extends Renderable
 		int facesCount = 0;
 		String line = "";
 		boolean bSmooth = false;
-		
+
 		try 
 		{
         	InputStream ims = context.getAssets().open("models/" + modelName);
@@ -123,9 +123,9 @@ public class Model extends Renderable
 					if (line.startsWith("v ")) 
 					{
 						LineParts = line.split("\\s");
-						mVerticesRawData[2 * vIdx] = Float.parseFloat(LineParts[1]);
-						mVerticesRawData[2 * vIdx + 1] = Float.parseFloat(LineParts[2]);
-						mVerticesRawData[2 * vIdx + 2] = Float.parseFloat(LineParts[3]);
+						mVerticesRawData[2 * vIdx] = Float.parseFloat(LineParts[1])*2;
+						mVerticesRawData[2 * vIdx + 1] = Float.parseFloat(LineParts[2])*2;
+						mVerticesRawData[2 * vIdx + 2] = Float.parseFloat(LineParts[3])*2;
 						vIdx += 3;
 					}
 					else if (line.startsWith("vn ")) 

@@ -7,7 +7,7 @@ varying vec3 p_Normal;
 void main() 
 {
 	vec3 FixedNormal = normalize(p_Normal);
-	vec3 LightVector = normalize(vec3(-1.0, 0.3, 0.5));
+	vec3 LightVector = normalize(vec3(1.0, 1, 1));
 	
 	float AmbientWeight = 0.25;
 	float AmbientFactor = 1.0;
