@@ -69,6 +69,7 @@ public class Model extends Renderable
 	{
 		List<String> strLines = new ArrayList<String>();
 		int verticlesCount = 0;
+		int normalsCount = 0;
 		int facesCount = 0;
 		String line = "";
 		boolean bSmooth = false;
@@ -79,6 +80,7 @@ public class Model extends Renderable
         	DataInputStream in = new DataInputStream(ims);
         	BufferedReader br = new BufferedReader(new InputStreamReader(in));
  
+        	// read file and count stuff
         	while ((line = br.readLine()) != null)
         	{
         		strLines.add(line);
@@ -87,13 +89,25 @@ public class Model extends Renderable
         		{
         			++verticlesCount;
         		}
+        		else if (line.startsWith("vn "))
+        		{
+        			++normalsCount;
+        		}
         		else if (line.startsWith("f ")) 
         		{
         			++facesCount;
         		}
+        		// determine smooth group
         		else if (line.startsWith("s "))
         		{
-        			bSmooth = Integer.parseInt(line.substring(2)) != 0;
+        			if (line.substring(2).contains("off"))
+        			{
+        				bSmooth = false;
+        			}
+        			else
+        			{
+        				bSmooth = Integer.parseInt(line.substring(2)) != 0;        				
+        			}
         		}
         	}
         	
@@ -103,51 +117,82 @@ public class Model extends Renderable
 		{
 			e.printStackTrace();
 		}
-				
+		
+		// smooth not supported
 		if (bSmooth)
 		{
 			int vIdx = 0, nIdx = 0, iIdx = 0;
 			String[] LineParts;
 			String[] FaceParts;
 			
-			mVerticesRawData = new float[(FLOATS_PER_POSITION + FLOATS_PER_NORMAL) * verticlesCount];
+			// make temporary holders
+			float[] verticleStored = new float[verticlesCount*3];
+			// was float[] normalsStored = new float[normalsCount*3];
+			float[] normalsStored = new float[verticlesCount*3];
+			short[] matching = new short[verticlesCount];
+			short faceIndex;
+			
 			mIndicesAmount = facesCount * 3;
 			mIndicesRawData = new short[mIndicesAmount];
 			
+			// parse every line
 			for (int i = 0; i < strLines.size(); ++i) 
 			{
 				line = strLines.get(i);
 				
 				if (!line.isEmpty() && !line.startsWith("#")) 
 				{
+					// store verticles
 					if (line.startsWith("v ")) 
 					{
 						LineParts = line.split("\\s");
-						mVerticesRawData[2 * vIdx] = Float.parseFloat(LineParts[1])*2;
-						mVerticesRawData[2 * vIdx + 1] = Float.parseFloat(LineParts[2])*2;
-						mVerticesRawData[2 * vIdx + 2] = Float.parseFloat(LineParts[3])*2;
-						vIdx += 3;
+						verticleStored[vIdx++] = Float.parseFloat(LineParts[1]);
+						verticleStored[vIdx++] = Float.parseFloat(LineParts[2]);
+						verticleStored[vIdx++] = Float.parseFloat(LineParts[3]);
 					}
+					// store normal vectors
 					else if (line.startsWith("vn ")) 
 					{
 						LineParts = line.split("\\s");
-						mVerticesRawData[2 * nIdx + 3] = Float.parseFloat(LineParts[1]);
-						mVerticesRawData[2 * nIdx + 4] = Float.parseFloat(LineParts[2]);
-						mVerticesRawData[2 * nIdx + 5] = Float.parseFloat(LineParts[3]);
-						nIdx += 3;
+						normalsStored[nIdx++] = Float.parseFloat(LineParts[1]);
+						normalsStored[nIdx++] = Float.parseFloat(LineParts[2]);
+						normalsStored[nIdx++] = Float.parseFloat(LineParts[3]);
 					}
+					// store faces, and store matching(verticle - mean normal vector)
 					else if (line.startsWith("f ")) 
 					{
 						LineParts = line.split("\\s");
+						
 						for (int j = 1; j < LineParts.length; j++) 
 						{
 							FaceParts = LineParts[j].split("\\/");
 							
-							mIndicesRawData[iIdx++] = (short) (Short.parseShort(FaceParts[0]) - 1);
-							// take care of other face indicies (tx and n) here:
+							faceIndex = (short) (Short.parseShort(FaceParts[0]) - 1);
+							matching[faceIndex] = (short) (Short.parseShort(FaceParts[2]) - 1);
+
+							mIndicesRawData[iIdx++] = faceIndex;
 						}
 					}
 				}
+			}
+			
+			iIdx = 0;
+			
+			// was (FLOATS_PER_POSITION * verticlesCount + FLOATS_PER_NORMAL * normalsCount)
+			mVerticesRawData = new float[(FLOATS_PER_POSITION * verticlesCount + FLOATS_PER_NORMAL * verticlesCount)];
+			
+			// fill buffer with matching pairs
+			for( int i = 0; i < mVerticesRawData.length; i+=6, ++iIdx)
+			{
+				// vert
+				mVerticesRawData[i] 	= verticleStored[iIdx * FLOATS_PER_POSITION];
+				mVerticesRawData[i + 1] = verticleStored[iIdx * FLOATS_PER_POSITION + 1];
+				mVerticesRawData[i + 2] = verticleStored[iIdx * FLOATS_PER_POSITION + 2];
+			
+				// his normal 
+				mVerticesRawData[i + 3] = normalsStored[matching[iIdx] * FLOATS_PER_NORMAL];
+				mVerticesRawData[i + 4] = normalsStored[matching[iIdx] * FLOATS_PER_NORMAL + 1];
+				mVerticesRawData[i + 5] = normalsStored[matching[iIdx] * FLOATS_PER_NORMAL + 2];
 			}
 		}
 		else
